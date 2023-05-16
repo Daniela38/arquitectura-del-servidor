@@ -2,29 +2,10 @@
 const fs = require('fs');
 
 class ProductManager{
-    constructor(){
+    constructor(path){
         this.products = [];
         this.id = 1;
-        this.path = './products.json';
-    }
-
-    addProduct(product){
-        if({title:"", description:"", price:"", thumbnail:"", code:"", stock:""}){
-            if(!(this.getProductByCode(product.code))){
-                const id = this.products.length + 1;
-                this.products.push({id, ...product});
-                this.saveProducts();
-            }
-        }else{
-            console.log("Error, tiene que ingresar todos los campos")
-        }
-    }
-
-    getProductByCode(code){
-        return this.products.find((product) => product.code === code);
-    }
-
-    getProducts(){
+        this.path = path;
         const operaciones = async () => {
             try{
                 const data = await fs.promises.readFile(this.path, 'utf-8');
@@ -33,13 +14,34 @@ class ProductManager{
                 throw new Error('Hubo un error en la lectura');
             }      
         }
+    }
+
+    addProduct(product){
+        if({title:"", description:"", price:"", thumbnail:"", code:"", stock:""}){
+            if(!(this.getProductByCode(product.code))){
+                const id = this.id++;
+                this.products.push({id, ...product});
+                this.saveProducts();
+            }else{
+                return ("Código repetido");
+            }
+        }else{
+            return ("Error, tiene que ingresar todos los campos");
+        }
+    }
+
+    getProductByCode(code){
+        return this.products.find((product) => product.code === code);
+    }
+
+    getProducts(){
         return this.products;
     }
 
     getProductById(id){
         const product = this.products.find((product) => product.id === id);
         if(!product){
-            console.log("Not found")
+            return ("Not found");
         }
         return product
     }
@@ -47,7 +49,7 @@ class ProductManager{
     updateProduct(id, newProduct){
         const productIndex = this.products.findIndex((product) => product.id === id);
         if(productIndex === - 1){
-            console.log('Producto inexistente');
+            return ('Producto inexistente');
         }
         const product = this.products[productIndex];
         const newField = {...product, ...newProduct};
@@ -66,7 +68,9 @@ class ProductManager{
     }
 }
 
-const productManager = new ProductManager();
+const productManager = new ProductManager('./products.json');
+
+console.log(productManager.getProducts());
 
 productManager.addProduct({
     title: "producto prueba",
@@ -86,6 +90,15 @@ productManager.addProduct({
     stock: 20
 });
 
+productManager.addProduct({
+    title: "producto prueba 3",
+    description: "Este es un producto prueba 3",
+    price: 350,
+    thumbnail: "Sin imagen",
+    code: "ghi789",
+    stock: 20
+});
+
 console.log(productManager.getProducts());
 
 productManager.updateProduct(1, {
@@ -101,7 +114,16 @@ console.log(productManager.getProducts());
 
 productManager.deleteProduct(2);
 
+productManager.addProduct({
+    title: "producto prueba 4",
+    description: "Este es un producto prueba 4",
+    price: 450,
+    thumbnail: "Sin imagen",
+    code: "jkl789",
+    stock: 20
+});
+
 console.log(productManager.getProducts());
 
 console.log(productManager.getProductById(1));
-console.log(productManager.getProductById(3));
+console.log(productManager.getProductById(5));
