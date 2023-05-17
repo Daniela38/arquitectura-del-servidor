@@ -6,14 +6,17 @@ class ProductManager{
         this.products = [];
         this.id = 1;
         this.path = path;
-        const operaciones = async () => {
-            try{
-                const data = await fs.promises.readFile(this.path, 'utf-8');
-                this.products = JSON.parse(data);
-            } catch (e){
-                throw new Error('Hubo un error en la lectura');
-            }      
-        }
+        this.getData();
+    }
+
+    async getData() {
+        try{
+            const data = await fs.promises.readFile(this.path, 'utf-8');
+            this.products = JSON.parse(data);
+            return this.products;
+        } catch (e){
+            throw new Error('Hubo un error en la lectura');
+        } 
     }
 
     addProduct(product){
