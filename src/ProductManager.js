@@ -1,8 +1,8 @@
 
-const fs = require('fs');
-//import fs from 'fs';
+//const fs = require('fs');
+import fs from 'fs';
 
-export default class ProductManager{
+class ProductManager{
     constructor(path){
         this.products = [];
         this.id = 1;
@@ -44,9 +44,9 @@ export default class ProductManager{
 
     getProductById(id){
         const product = this.products.find((product) => product.id === id);
-        if(!product){
+        /*if(!product){
             return ("Not found");
-        }
+        }*/
         return product
     }
 
@@ -71,3 +71,5 @@ export default class ProductManager{
         fs.writeFileSync(this.path, JSON.stringify(this.products))
     }
 }
+
+export default ProductManager;

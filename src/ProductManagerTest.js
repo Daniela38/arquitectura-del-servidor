@@ -1,5 +1,5 @@
 
-import {ProductManager} from './ProductManager'
+import ProductManager from './ProductManager.js'
 
 const productManager = new ProductManager('./products.json');
 
