@@ -1,40 +1,36 @@
 import { Router } from "express";
+import CartManager from "../managers/CartManager.js";
 
 const router = Router();
-const carts = [];
+const cartManager = new CartManager('./data/carts.json');
 
-router.post('/', (req,res)=>{
-    const cart = {
-        id: Math.random(),
-        products: [],
-    };
-    carts.push(cart);
-    res.send({status:"success"});
-});
-
-router.get('/:cid', (req, res) => {
-    const cartId = parseInt(req.params.cid);
-    const cart = carts.find((cart) => cart.id === cartId);
-    if(cart){
-        res.send(cart.products);
-    }else{
-        return res.status(404).send({ status:'error', error: 'El producto no existe'});
+router.post('/', async(req,res) => {
+    try{
+        const newCart = await cartManager.addCart();
+        res.send(newCart);
+    }catch(error){
+        res.status(500).send('Error al obtener los datos');
     }
 });
 
-router.post('/:cid/product/:pid', (req, res) => {
-    const cartId = parseInt(req.params.cartId);
-    const productId = parseInt(req.params.productId);
-    const cart = carts.find((cart) => cart.is === cartId);
-    const product = cart.products.find((product) => products.id === productId);
-    if(product){
-        product.quantity += 1;
-    }else{
-        const newProduct = {
-            product: productId,
-            quantity: 1
-        };
-        cart.products.push(newProduct);
+router.get('/:cid', async(req, res) => {
+    try{
+        const cartId = parseInt(req.params.cid);
+        const cart = await cartManager.getCartById(cartId);
+        res.send(cart);
+    }catch(error){
+        res.status(500).send('Error al obtener los datos');
+    }
+});
+
+router.post('/:cid/product/:pid', async(req, res) => {
+    try{
+        const cartId = parseInt(req.params.cid);
+        const productId = parseInt(req.params.pid);
+        const cartProduct = await cartManager.addProductCart(cartId, productId);
+        res.send(cartProduct);
+    }catch{
+        res.status(500).send('Error al obtener los datos');
     }
 })
 

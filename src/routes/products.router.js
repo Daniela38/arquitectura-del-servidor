@@ -1,59 +1,71 @@
 import { Router } from "express";
+import ProductManager from "../managers/ProductManager.js";
 
 const router = Router();
-const products = [];
+const productManager = new ProductManager('./data/products.json');
 
-router.get('/', (req,res)=>{
-    res.send({products})
-});
-
-router.get('/:pid',(req, res) => {
-    const productId = parseInt(req.params.pid);
-    const product = products.find((product) => product.id === productId);
-    if(product){
-        res.send(product);
-    }else{
-        return res.status(404).send({ status:'error', error: 'El producto no existe'});
+router.get('/', async(req,res) => {
+    try{
+        const limit = parseInt(req.query.limit);
+        const products = await productManager.getProducts();
+        const limitProduct = limit >= 0 ? limit : products.length;
+        res.send(products.slice(o, limitProduct));
+    }catch(error){
+        res.status(500).send('Error al obtener los datos');
     }
 });
 
-router.post('/', (req, res) => {
-    const {title, description, code, price, status, stock, category, thumbnail} = req.body;
-    const newProduct = {
-        id: Math.random(),
-        title,
-        description,
-        code,
-        price,
-        status,
-        stock,
-        category,
-        thumbnail
+router.get('/:pid', async(req, res) => {
+    try{
+        const productId = parseInt(req.params.pid);
+        const product = await productManager.getProductById(productId);
+        res.send(product); 
+    }catch(error){
+        res.status(500).send('Error al obtener los datos');
     }
-    products.push(newProduct);
-    res.send({status:"success"});
 });
 
-router.put('/:pid', (req, res) => {
-    const productId = parseInt(req.params.pid);
-    const newField = req.body;
-    const product = products.find((product) => product.id === productId);
-    if(product){
-        products.productId = newField;
-        res.send(product);
-    }else{
-        return res.status(404).send({ status:'error', error: 'El producto no existe'});
+router.post('/', async(req, res) => {
+    try{
+        const {
+            title, 
+            description, 
+            code, 
+            price, 
+            status, 
+            stock, 
+            category, 
+            thumbnail
+        } = req.body;
+        await productManager.addProduct(title, description, code, price, status, stock, category, thumbnail);
+        res.send('Producto agregado');
+    }catch(error){
+        res.status(500).send('Error al obtener los datos');
+    }
+});
+
+router.put('/:pid', async(req, res) => {
+    try{
+        const productId = parseInt(req.params.pid);
+        const newField = req.body;
+        await productManager.updateProduct(productId, newField);
+        res.send('Producto actualizado');
+    }catch(error){
+        res.status(500).send('Error al obtener los datos');
     }
 })
 
-router.delete('/:pid', (req, res) => {
-    const productId = parseInt(req.params.id);
-    const index = products.findIndex((product) => product.id === productId);
-    if(index !== -1){
-        const deletedProduct = products.splice(index, 1);
-        res.send(deletedProduct);
-    }else{
-        return res.status(404).send({ status:'error', error: 'El producto no existe'});
+router.delete('/:pid', async(req, res) => {
+    try{
+        const productId = parseInt(req.params.id);
+        const deletedProduct =  await productManager.deleteProduct(productId);
+        if(!deletedProduct){
+            res.send('Producto eliminado');
+        }else{
+            res.send('El producto no existe');
+        }
+    }catch(error){
+        res.status(500).send('Error al obtener los datos');
     }
 });
 
