@@ -2,14 +2,17 @@ const socket = io();
 
 const updateProduct = (products) => {
     const container = document.getElementById('container');
+    container.innerHTML = '';
     products.forEach(product => {
-        container.innerHTML = ` 
-            <h6>{{this.title}}</h6>
-            <p>{{this.category}}</p>
-            <p>{{this.description}}</p>
-            <p>{{this.price}}</p>
-            <p>{{this.stock}}</p>
+        const productContainer = document.createElement('div');
+        productContainer.innerHTML = ` 
+            <h6>{${product.title}}</h6>
+            <p>{${product.category}}</p>
+            <p>{${product.description}}</p>
+            <p>{${product.price}}</p>
+            <p>{${product.stock}}</p>
         `;
+        container.appendChild(productContainer);
     });
 };
 

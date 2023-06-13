@@ -1,4 +1,5 @@
 import { Router } from "express";
+import updatedProducts from "../utils/socketUtils.js";
 import ProductManager from "../managers/ProductManager.js";
 
 const router = Router();
@@ -38,6 +39,7 @@ router.post('/', async(req, res) => {
             thumbnail
         } = req.body;
         await productManager.addProduct(title, description, code, price, status, stock, category, thumbnail);
+        updatedProducts(req.app.get('io'));
         res.send('Producto agregado');
     }catch(error){
         res.status(500).send('Error al obtener los datos');
@@ -49,6 +51,7 @@ router.put('/:pid', async(req, res) => {
         const productId = parseInt(req.params.pid);
         const newField = req.body;
         await productManager.updateProduct(productId, newField);
+        updatedProducts(req.app.get('io'));
         res.send('Producto actualizado');
     }catch(error){
         res.status(500).send('Error al obtener los datos');
@@ -60,6 +63,7 @@ router.delete('/:pid', async(req, res) => {
         const productId = parseInt(req.params.id);
         const deletedProduct =  await productManager.deleteProduct(productId);
         if(!deletedProduct){
+            updatedProducts(req.app.get('io'));
             res.send('Producto eliminado');
         }else{
             res.send('El producto no existe');

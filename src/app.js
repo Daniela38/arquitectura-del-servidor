@@ -1,6 +1,6 @@
 
 import express from 'express';
-import __dirname from './utils.js';
+import __dirname from './utils/utils.js';
 import handlebars from 'express-handlebars';
 import viewsRouter from './routes/views.router.js';
 import { Server } from 'socket.io';
@@ -24,6 +24,8 @@ app.use('/', viewsRouter);
 const httpServer = app.listen(8080, () => console.log('Listening on 8080'));
 
 const io = new Server(httpServer);
+
+app.set('io', io);
 
 io.on('connection', socket => {
     console.log("Nuevo cliente conectado", socket.id);

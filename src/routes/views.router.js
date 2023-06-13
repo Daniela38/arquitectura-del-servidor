@@ -9,7 +9,7 @@ router.get('/', async(req, res) => {
     res.render('home', {title: 'Ecommerce', products: products});
 })
 
-router.get('/realtomeproducts', (req, res) => {
+router.get('/realtimeproducts', (req, res) => {
     res.render('realTimeProducts', {title: 'Ecommerce'});
 })
 
