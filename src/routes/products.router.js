@@ -1,16 +1,16 @@
 import { Router } from "express";
-import updatedProducts from "../utils/socketUtils.js";
-import ProductManager from "../managers/ProductManager.js";
+import { updatedProducts } from "../utils/socketUtils.js";
+import DbProductManager from "../dao/DBProductManager.js";
 
 const router = Router();
-const productManager = new ProductManager('./data/products.json');
+const dbProductManager = new DbProductManager();
 
 router.get('/', async(req,res) => {
     try{
         const limit = parseInt(req.query.limit);
-        const products = await productManager.getProducts();
+        const products = await dbProductManager.getProducts();
         const limitProduct = limit >= 0 ? limit : products.length;
-        res.send(products.slice(o, limitProduct));
+        res.send(products.slice(0, limitProduct));
     }catch(error){
         res.status(500).send('Error al obtener los datos');
     }
@@ -18,8 +18,8 @@ router.get('/', async(req,res) => {
 
 router.get('/:pid', async(req, res) => {
     try{
-        const productId = parseInt(req.params.pid);
-        const product = await productManager.getProductById(productId);
+        const {productId} = req.params;
+        const product = await dbProductManager.getProductById(productId);
         res.send(product); 
     }catch(error){
         res.status(500).send('Error al obtener los datos');
@@ -38,7 +38,7 @@ router.post('/', async(req, res) => {
             category, 
             thumbnail
         } = req.body;
-        await productManager.addProduct(title, description, code, price, status, stock, category, thumbnail);
+        await dbProductManager.addProduct(title, description, code, price, status, stock, category, thumbnail);
         updatedProducts(req.app.get('io'));
         res.send('Producto agregado');
     }catch(error){
@@ -48,9 +48,9 @@ router.post('/', async(req, res) => {
 
 router.put('/:pid', async(req, res) => {
     try{
-        const productId = parseInt(req.params.pid);
+        const {id} = req.params;
         const newField = req.body;
-        await productManager.updateProduct(productId, newField);
+        await dbProductManager.updateProduct(id, newField);
         updatedProducts(req.app.get('io'));
         res.send('Producto actualizado');
     }catch(error){
@@ -61,7 +61,7 @@ router.put('/:pid', async(req, res) => {
 router.delete('/:pid', async(req, res) => {
     try{
         const productId = parseInt(req.params.id);
-        const deletedProduct =  await productManager.deleteProduct(productId);
+        const deletedProduct =  await dbProductManager.deleteProduct(productId);
         if(!deletedProduct){
             updatedProducts(req.app.get('io'));
             res.send('Producto eliminado');
