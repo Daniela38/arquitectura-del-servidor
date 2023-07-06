@@ -29,12 +29,13 @@ app.use('api/messages', messagesRouter);
 app.use('/', viewsRouter);
 
 //mongoDB
-const MONGO = mongoose.connect(`mongodb+srv://${DB_USER}:${DB_PASSWORD}@cluster0.446hjvi.mongodb.net/?retryWrites=true&w=majority`)
-mongoose.connect(MONGO).then((conn) =>{
+const MONGO = (`mongodb+srv://danizaccarello:danizaccarello@cluster0.446hjvi.mongodb.net/ecommerce`);
+mongoose.connect(MONGO)
+.then((conn) =>{
     console.log('Connected');
 }).catch((err) => {
     console.log('Error');
-})
+});
 
 //server
 const PORT = 8080;

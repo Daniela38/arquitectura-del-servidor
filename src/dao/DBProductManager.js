@@ -6,9 +6,29 @@ class DbProductManager{
         this.productsModel = ProductsModel;
     }
 
-    async getProducts(){
+    async getProducts(limit, page, sort, category, available){
         try{
-            const products = await this.productsModel.find()
+            let query = this.productsModel.find();
+            if(category){
+                query = query.category;
+            }
+            if(available){
+                query = query.available;
+            }
+            if(sort){
+                if(sort === 'asc'){
+                    query = query.sort({ price: 1 });
+                }else if(sort === 'desc'){
+                    query = query.sort({ price: -1 });
+                }else{
+                    throw new Error('asc or desc expected');
+                }
+            }
+            const products = await this.productsModel.paginate(query, {
+                    limit: limit || 10,
+                    page: page || 1,
+                }
+            )
             return products 
         } catch(error){
             console.log('Error');
@@ -39,6 +59,7 @@ class DbProductManager{
     async updateProduct(id, updateBodyProduct){
         try{
             const updatedProduct = await this.productsModel.updateOne({_id:id}, updateBodyProduct);
+            console.log(updateBodyProduct)
             return updatedProduct
         } catch(error) {
             console.log('Error');
