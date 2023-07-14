@@ -27,8 +27,7 @@ class DbProductManager{
             const products = await this.productsModel.paginate(query, {
                     limit: limit || 10,
                     page: page || 1,
-                }
-            )
+                });
             return products 
         } catch(error){
             console.log('Error');

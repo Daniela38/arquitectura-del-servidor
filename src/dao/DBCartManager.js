@@ -78,6 +78,33 @@ class DbCartManager {
         }
     }
 
+    async updateProductQuantity(cartId, productId, quantity){
+        try{
+            const cart = await this.CartsModel.findById(cartId);
+            if(!cart){
+                throw new Error('Cart not found');
+            }
+            if(!productId){
+                throw new Error('Product ID is required');
+            }
+            const existingProduct = cart.products.find((product) => product.productId === productId);
+            if(!existingProduct){
+                throw new Error('Product not found in cart');
+            }
+            if(!quantity){
+                throw new Error('Quantity is required');
+            }
+            if(quantity <= 0){
+                throw new Error('Quantity cannot be zero or negative');
+            }
+            existingProduct.quantity = quantity;
+            await cart.save();
+            return cart;
+        } catch(error){
+            throw new Error('Error');
+        }
+    } 
+
     async deleteCart(cartId) {
         try {
             const cart = await this.cartModel.findByIdAndDelete(cartId);

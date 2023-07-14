@@ -6,9 +6,10 @@ import viewsRouter from './routes/views.router.js';
 import { Server } from 'socket.io';
 import productsRouter from './routes/products.router.js';
 import cartsRouter from './routes/carts.router.js';
-import messagesRouter from './routes/messages.router.js'
+import messagesRouter from './routes/messages.router.js';
+import sessionsRouter from './routes/sessions.router.js';
 import mongoose from 'mongoose';
-import { DB_USER, DB_PASSWORD } from './utils/mongoDBConfig.js';
+import MongoStore from 'connect-mongo';
 
 //middlewares
 const app = express();
@@ -23,6 +24,7 @@ app.set('view engine', 'handlebars');
 app.use(express.static(__dirname + '/public'));
 
 //routes
+app.use('/api/sessions', sessionsRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
 app.use('api/messages', messagesRouter);
@@ -30,12 +32,28 @@ app.use('/', viewsRouter);
 
 //mongoDB
 const MONGO = (`mongodb+srv://danizaccarello:danizaccarello@cluster0.446hjvi.mongodb.net/ecommerce`);
-mongoose.connect(MONGO)
+mongoose.connect(MONGO, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
 .then((conn) =>{
     console.log('Connected');
 }).catch((err) => {
     console.log('Error');
 });
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(__dirname + '/public'))
+app.use(session({
+    store: new MongoStore({
+        mongoUrl: mongoUrl,
+        ttl: 3600
+    }),
+    secret: "SecretSession",
+    resave: false,
+    saveUninitialized: false
+}))
 
 //server
 const PORT = 8080;
