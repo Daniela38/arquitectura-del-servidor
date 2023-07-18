@@ -2,8 +2,9 @@
 import express from 'express';
 import __dirname from './utils/utils.js';
 import handlebars from 'express-handlebars';
-import viewsRouter from './routes/views.router.js';
+import session from 'express-session';
 import { Server } from 'socket.io';
+import viewsRouter from './routes/views.router.js';
 import productsRouter from './routes/products.router.js';
 import cartsRouter from './routes/carts.router.js';
 import messagesRouter from './routes/messages.router.js';
@@ -11,24 +12,18 @@ import sessionsRouter from './routes/sessions.router.js';
 import mongoose from 'mongoose';
 import MongoStore from 'connect-mongo';
 
-//middlewares
+//Express middlewares
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-//handlebars
+//Handlebars
 app.engine('handlebars', handlebars.engine());
-app.set('views', __dirname+'/views');
+app.set('views', __dirname + '/views');
 app.set('view engine', 'handlebars');
 
+//Public
 app.use(express.static(__dirname + '/public'));
-
-//routes
-app.use('/api/sessions', sessionsRouter);
-app.use('/api/products', productsRouter);
-app.use('/api/carts', cartsRouter);
-app.use('api/messages', messagesRouter);
-app.use('/', viewsRouter);
 
 //mongoDB
 const MONGO = (`mongodb+srv://danizaccarello:danizaccarello@cluster0.446hjvi.mongodb.net/ecommerce`);
@@ -42,12 +37,10 @@ mongoose.connect(MONGO, {
     console.log('Error');
 });
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(__dirname + '/public'))
+//Session
 app.use(session({
     store: new MongoStore({
-        mongoUrl: mongoUrl,
+        mongoUrl: MONGO,
         ttl: 3600
     }),
     secret: "SecretSession",
@@ -55,7 +48,15 @@ app.use(session({
     saveUninitialized: false
 }))
 
-//server
+//Routes
+app.use('/', viewsRouter);
+app.use('/api/products', productsRouter);
+app.use('/api/carts', cartsRouter);
+app.use('api/messages', messagesRouter);
+app.use('/api/sessions', sessionsRouter);
+
+
+//Server
 const PORT = 8080;
 const httpServer = app.listen(PORT, () => console.log('Listening on ' + PORT));
 

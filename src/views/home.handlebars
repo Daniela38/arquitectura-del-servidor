@@ -1,7 +1,6 @@
 <div>
-    <button class="logout">Logout</button>
-    <h1>Productos agregados</h1>
-    {{#each products}}
+    <h1>Listado de productos</h1>
+    {{#each products.products}}
         <h6>{{this.title}}</h6>
         <p>{{this.category}}</p>
         <p>{{this.description}}</p>
@@ -9,4 +8,3 @@
         <p>{{this.stock}}</p>
     {{/each}}
 </div>
-<script src="/public/logout.js"></script>

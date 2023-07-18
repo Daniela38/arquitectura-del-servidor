@@ -1,5 +1,5 @@
 import{ Router } from "express";
-import ProductManager from "../dao/ProductManager.js";
+import DbProductManager from "../dao/DBProductManager.js";
 
 const router = Router();
 
@@ -17,11 +17,11 @@ router.get('/', (req, res) => {
     });
 })
 
-router.get('/', async(req, res) => {
-    const productManager = new ProductManager;
+/*router.get('/', async(req, res) => {
+    const productManager = new DbProductManager;
     const products = await productManager.getProducts();
     res.render('home', {title: 'Ecommerce', products: products});
-})
+})*/
 
 router.get('/realtimeproducts', (req, res) => {
     res.render('realTimeProducts', {title: 'Ecommerce'});
