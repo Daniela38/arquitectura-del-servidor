@@ -23,9 +23,6 @@ app.engine('handlebars', handlebars.engine());
 app.set('views', __dirname + '/views');
 app.set('view engine', 'handlebars');
 
-//Public
-app.use('/files', express.static(path.join(__dirname + './public')));
-
 //mongoDB
 const MONGO = (`mongodb+srv://danizaccarello:danizaccarello@cluster0.446hjvi.mongodb.net/ecommerce`);
 mongoose.connect(MONGO, {
@@ -48,6 +45,9 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }))
+
+//Public
+app.use('/files', express.static(path.join(__dirname + './public')));
 
 //Routes
 app.use('/api/sessions', sessionsRouter);
