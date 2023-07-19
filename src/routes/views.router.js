@@ -17,11 +17,11 @@ router.get('/', (req, res) => {
     });
 })
 
-/*router.get('/', async(req, res) => {
+router.get('/products', async(req, res) => {
     const productManager = new DbProductManager;
     const products = await productManager.getProducts();
     res.render('home', {title: 'Ecommerce', products: products});
-})*/
+})
 
 router.get('/realtimeproducts', (req, res) => {
     res.render('realTimeProducts', {title: 'Ecommerce'});

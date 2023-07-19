@@ -2,6 +2,7 @@
 import express from 'express';
 import __dirname from './utils/utils.js';
 import handlebars from 'express-handlebars';
+import path from'path';
 import session from 'express-session';
 import { Server } from 'socket.io';
 import viewsRouter from './routes/views.router.js';
@@ -23,7 +24,7 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'handlebars');
 
 //Public
-app.use(express.static(__dirname + '/public'));
+app.use('/files', express.static(path.join(__dirname + './public')));
 
 //mongoDB
 const MONGO = (`mongodb+srv://danizaccarello:danizaccarello@cluster0.446hjvi.mongodb.net/ecommerce`);
@@ -49,11 +50,11 @@ app.use(session({
 }))
 
 //Routes
-app.use('/', viewsRouter);
+app.use('/api/sessions', sessionsRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
 app.use('api/messages', messagesRouter);
-app.use('/api/sessions', sessionsRouter);
+app.use('/', viewsRouter);
 
 
 //Server
