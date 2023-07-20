@@ -3,6 +3,12 @@ import DbProductManager from "../dao/DBProductManager.js";
 
 const router = Router();
 
+
+
+router.get('/', (req, res) => {
+    res.render('login');
+})
+
 router.get('/register', (req, res) => {
     res.render('register');
 })
@@ -11,7 +17,7 @@ router.get('/login', (req, res) => {
     res.render('login');
 })
 
-router.get('/', (req, res) => {
+router.get('/profile', (req, res) => {
     res.render('profile', {
         user: req.session.user
     });
@@ -20,7 +26,7 @@ router.get('/', (req, res) => {
 router.get('/products', async(req, res) => {
     const productManager = new DbProductManager;
     const products = await productManager.getProducts();
-    res.render('home', {title: 'Ecommerce', products: products});
+    res.render('home', {title: 'Ecommerce', products: products, user: req.session.user});
 })
 
 router.get('/realtimeproducts', (req, res) => {

@@ -19,9 +19,9 @@ router.post('/register', async (req, res) => {
 })
 
 router.post('/login', async (req, res) => {
-    const { email, password } = req.body;
-    const user = await userModel.findOne({ email });
-    if (!user) return res.status(400).send({ status: "error", error: "User does not exists" });
+    const { first_name, last_name, email, password } = req.body;
+    const userEmail = await userModel.findOne({ email });
+    if (!userEmail) return res.status(400).send({ status: "error", error: "User does not exists" });
     if (user.password !== password) {
         return res.status(400).send({ status: "error", error: "User exists but password is incorrect" });
     }

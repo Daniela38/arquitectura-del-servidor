@@ -1,5 +1,7 @@
 <div>
-    <h1>Listado de productos</h1>
+    <h1>Bienvenido al Ecommerce {{user.email}}</h1>
+    <p>{{user.first_name}}</p>
+    <h2>Listado de productos</h2>
     {{#each products.products}}
         <h6>{{this.title}}</h6>
         <p>{{this.category}}</p>
