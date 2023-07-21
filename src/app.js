@@ -12,6 +12,8 @@ import cartsRouter from './routes/carts.router.js';
 import messagesRouter from './routes/messages.router.js';
 import sessionsRouter from './routes/sessions.router.js';
 import mongoose from 'mongoose';
+import passport from 'passport';
+import initializePassport from './config/passport.config.js';
 
 //Express middlewares
 const app = express();
@@ -48,6 +50,11 @@ app.use(session({
 
 //Public
 app.use('/files', express.static(path.join(__dirname + './public')));
+
+//Passport
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
 
 //Routes
 app.use('/api/sessions', sessionsRouter);

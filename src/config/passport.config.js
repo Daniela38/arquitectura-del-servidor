@@ -1,6 +1,6 @@
 import passport from "passport";
 import local from "passport-local";
-import userModel from "../dao/models/users.model";
+import userModel from "../dao/models/users.model.js";
 import { createHash, isValidPassword } from "../utils/utils.js"
 import GitHubStrategy from "passport-github2";
 
@@ -39,6 +39,7 @@ const initializePassport = () => {
             }
         )
     );
+
     passport.use(
         "login",
         new LocalStrategy(
@@ -60,6 +61,7 @@ const initializePassport = () => {
             }
         )
     );
+
     passport.use('github', new GitHubStrategy({
         clientID: 'Iv1.af8e4342dc81a540',
         clientSecret: '3ca495862b9130c1b26e72dd33d02f0808cfbf56',
@@ -80,9 +82,10 @@ const initializePassport = () => {
             user = await userModel.create(newUser)
             return done(null, user)
         } catch (error) {
-            return done(error)
+            return done({ message: 'Error creating user' });
         }
-    }))
+    }));
+
     passport.serializeUser((user, done) => {
         done(null, user._id);
     });

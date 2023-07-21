@@ -1,6 +1,19 @@
-<div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div>
     <h1>Bienvenido al Ecommerce {{user.email}}</h1>
     <p>{{user.first_name}}</p>
+    {{#if user.role}}
+        <h4>Tipo de rol: usuario</h4>
+    {{else}}
+        <h4>Tipo de rol: admin</h4>
+    {{/if}}
     <h2>Listado de productos</h2>
     {{#each products.products}}
         <h6>{{this.title}}</h6>
@@ -12,3 +25,5 @@
     <button class="logout">Logout</button>
     <script src="/files/logout.js"></script>
 </div>
+</body>
+</html>
