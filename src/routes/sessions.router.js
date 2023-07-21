@@ -25,10 +25,17 @@ router.post('/login', async (req, res) => {
     if (user.password !== password) {
         return res.status(400).send({ status: "error", error: "User exists but password is incorrect" });
     }
+    if (user) {
+        let userRole = false;
+        if (email.includes("admin")) {
+            userRole = true;
+        }
+    }
     req.session.user = {
         name: `${user.first_name} ${user.last_name}`,
         email: user.email,
-        age: user.age
+        age: user.age,
+        rol: userRole
     }
 
     res.send({ status: "success", payload: req.session.user, message: "Successfully login" });

@@ -4,6 +4,7 @@ import __dirname from './utils/utils.js';
 import handlebars from 'express-handlebars';
 import path from'path';
 import session from 'express-session';
+import MongoStore from 'connect-mongo';
 import { Server } from 'socket.io';
 import viewsRouter from './routes/views.router.js';
 import productsRouter from './routes/products.router.js';
@@ -11,7 +12,6 @@ import cartsRouter from './routes/carts.router.js';
 import messagesRouter from './routes/messages.router.js';
 import sessionsRouter from './routes/sessions.router.js';
 import mongoose from 'mongoose';
-import MongoStore from 'connect-mongo';
 
 //Express middlewares
 const app = express();
