@@ -5,7 +5,7 @@ import passport from 'passport';
 const router = Router();
 
 router.post('/register', passport.authenticate('register', { failureRedirect: '/api/sessions/failregister '}), async (req, res) => {
-    res.status(200).send({ status: "success", message: "registered user" });
+    res.send({ status: "success", message: "registered user" });
 })
 
 router.get('/failregister', (req, res) => {
@@ -27,16 +27,16 @@ router.get('/failregister', (req, res) => {
     res.send({ status: "success", message: "User registered" });
 })*/
 
-router.post('/login', passport.authenticate('login', { failureRedirect: '/api/sessions/faillogin '}), (req, res) => {
+router.post('/login', passport.authenticate('login', { failureRedirect: '/api/sessions/faillogin '}), async (req, res) => {
     let userRole = true;
     if(req.user.email.includes("admin")) {
         userRole= false;
     }
     req.session.user = {
-        name: `${user.first_name} ${user.last_name}`,
-        email: user.email,
-        age: user.age,
-        rol: userRole
+        name: `${req.user.first_name} ${req.user.last_name}`,
+        email: req.user.email,
+        age: req.user.age,
+        rol: req.userRole
     }
     res.send({ status: "success", payload: req.session.user, message: "Successfully login" });
 });
@@ -70,9 +70,9 @@ router.get('/faillogin', (req, res) => {
 
 router.get('/github', passport.authenticate('github', { scope: ['user: email' ] }), async (req, res) => { });
 
-router.get('githubcallback', passport.authenticate('github', { failureRedirect: 'api/sessions/login' }), async (req, res) => {
+router.get('/githubcallback', passport.authenticate('github', { failureRedirect: 'api/sessions/login' }), async (req, res) => {
     req.session.user = req.user;
-    res.redirect('/');
+    res.redirect('/products');
 });
 
 router.post('/logout', (req, res) => {
