@@ -28,9 +28,9 @@ router.get('/failregister', (req, res) => {
 })*/
 
 router.post('/login', passport.authenticate('login', { failureRedirect: '/api/sessions/faillogin '}), async (req, res) => {
-    let userRole = true;
+    let userRole = false;
     if(req.user.email.includes("admin")) {
-        userRole= false;
+        userRole= true;
     }
     req.session.user = {
         name: `${req.user.first_name} ${req.user.last_name}`,

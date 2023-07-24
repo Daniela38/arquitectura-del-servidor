@@ -10,9 +10,9 @@
     <h1>Bienvenido al Ecommerce {{user.email}}</h1>
     <p>{{user.first_name}}</p>
     {{#if user.role}}
-        <h4>Tipo de rol: usuario</h4>
-    {{else}}
         <h4>Tipo de rol: admin</h4>
+    {{else}}
+        <h4>Tipo de rol: usuario</h4>
     {{/if}}
     <h2>Listado de productos</h2>
     {{#each products.products}}
