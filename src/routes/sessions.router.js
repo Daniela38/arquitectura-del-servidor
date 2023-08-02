@@ -1,12 +1,20 @@
+import cookieParser from 'cookie-parser';
 import { Router } from 'express';
 //import userModel from '../dao/models/users.model.js';
 import passport from 'passport';
 
 const router = Router();
+router.use(cookieParser());
 
 router.post('/register', passport.authenticate('register', { failureRedirect: '/api/sessions/failregister '}), async (req, res) => {
-    res.send({ status: "success", message: "registered user" });
-})
+    /*req.session.user = {
+        name: `${req.user.first_name} ${req.user.last_name}`,
+        email: req.user.email,
+        age: req.user.age,
+        rol: req.userRole
+    }*/
+    res.send({ status: "success", message: "User registered" });
+});
 
 router.get('/failregister', (req, res) => {
     res.status(400).send({ status: "error", error: "Sign up failed" });
@@ -27,22 +35,31 @@ router.get('/failregister', (req, res) => {
     res.send({ status: "success", message: "User registered" });
 })*/
 
-router.post('/login', passport.authenticate('login', { failureRedirect: '/api/sessions/faillogin '}), async (req, res) => {
-    let userRole = false;
+router.post('/login', passport.authenticate('login', { session:false }), async (req, res) => {
+    /*let userRole = false;
     if(req.user.email.includes("admin")) {
         userRole= true;
-    }
-    req.session.user = {
+    }*/
+    /*req.session.user = {
         name: `${req.user.first_name} ${req.user.last_name}`,
         email: req.user.email,
         age: req.user.age,
         rol: req.userRole
-    }
-    res.send({ status: "success", payload: req.session.user, message: "Successfully login" });
+    }*/
+    //res.send({ status: "success", payload: req.session.user, message: "Successfully login" });
+    res.cookie("loginCookieToken", req.user, {httpOnly: true}).status(200).send("Cookie set")
 });
 
-router.get('/faillogin', (req, res) => {
+/*router.get('/faillogin', (req, res) => {
     res.status(400).send({ status: "error", error: "Login failed" });
+});*/
+
+router.post('/resetpassword', passport.authenticate('resetPassword', { failureRedirect: '/api/sessions/failreset' }), async (req, res) => {
+    res.send({ status: 1, msg: 'Password reset'});
+});
+
+router.get('/failreset', (req, res) => {
+    res.status(400).send({ status: "error", error: 'Reset password failed'});
 });
 
 /*router.post('/login', async (req, res) => {
@@ -67,6 +84,14 @@ router.get('/faillogin', (req, res) => {
 
     res.send({ status: "success", payload: req.session.user, message: "Successfully login" });
 })*/
+
+router.get('/current', passport.authenticate("current", { session: false }), (req,res) => {
+    if(req.user) {
+        res.status(200).send(req.user.user)
+    } else {
+        res.status(400).send('Fail to bring user')
+    }
+})
 
 router.get('/github', passport.authenticate('github', { scope: ['user: email' ] }), async (req, res) => { });
 

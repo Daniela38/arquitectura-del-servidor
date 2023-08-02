@@ -14,11 +14,13 @@ form.addEventListener('submit',e=>{
     }).then(result=>{
         if(result.status===200){
             window.location.replace('/products');
-            if(obj.email === "adminCoder@coder.com" && obj.password === "Cod3r123"){
+            /*if(obj.email === "adminCoder@coder.com" && obj.password === "Cod3r123"){
                 console.log("Rol: admin");
             } else{
                 console.log("Rol: user");
-            }
+            }*/
+        } else {
+            alert(result.msg);
         }
     })
 })

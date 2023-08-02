@@ -1,5 +1,5 @@
 
-import ProductsModel from "./models/products.schema.js";
+import ProductsModel from "../models/products.model.js";
 
 class DbProductManager{
     constructor(){

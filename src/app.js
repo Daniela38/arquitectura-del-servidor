@@ -14,11 +14,13 @@ import sessionsRouter from './routes/sessions.router.js';
 import mongoose from 'mongoose';
 import passport from 'passport';
 import initializePassport from './config/passport.config.js';
+import cookieParser from 'cookie-parser';
 
 //Express middlewares
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 //Handlebars
 app.engine('handlebars', handlebars.engine());
@@ -54,7 +56,7 @@ app.use('/files', express.static(path.join(__dirname + './public')));
 //Passport
 initializePassport();
 app.use(passport.initialize());
-app.use(passport.session());
+//app.use(passport.session());
 
 //Routes
 app.use('/api/sessions', sessionsRouter);

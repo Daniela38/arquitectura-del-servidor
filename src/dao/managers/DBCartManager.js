@@ -1,5 +1,5 @@
-import CartsModel from "./models/carts.schema.js";
-import ProductsModel from "./models/products.schema.js";
+import CartsModel from "../models/carts.model.js";
+import ProductsModel from "../models/products.model.js";
 
 class DbCartManager {
     constructor() {

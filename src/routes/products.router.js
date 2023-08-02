@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { updatedProducts } from "../utils/socketUtils.js";
-import DbProductManager from "../dao/DBProductManager.js";
+import DbProductManager from "../dao/managers/DBProductManager.js";
 
 const router = Router();
 const dbProductManager = new DbProductManager();
@@ -30,9 +30,9 @@ router.post('/', async(req, res) => {
         const newProductFields = req.body;
         const newProduct = await dbProductManager.addProduct(newProductFields);
         updatedProducts(req.app.get('io'));
-        res.send('Producto agregado');
+        res.send({status: 1, msg: 'Added product', product: newProduct});
     }catch(error){
-        res.status(500).send('Error al obtener los datos');
+        res.status(500).send({status: 0, msg: error.message});
     }
 });
 
@@ -43,11 +43,11 @@ router.put('/:id', async(req, res) => {
         const updatedProduct = await dbProductManager.updateProduct(id, newField);
         console.log(updatedProduct)
         updatedProducts(req.app.get('io'));
-        res.send('Producto actualizado');
+        res.send({status: 1, msg: 'Updated product', product: updatedProduct});
     }catch(error){
-        res.status(500).send('Error al obtener los datos');
+        res.status(404).send({status: 0, msg: error.message});
     }
-})
+});
 
 router.delete('/:id', async(req, res) => {
     try{
@@ -55,9 +55,9 @@ router.delete('/:id', async(req, res) => {
         const deletedProduct =  await dbProductManager.deleteProduct(id);
         if(deletedProduct){
             updatedProducts(req.app.get('io'));
-            res.send('Producto eliminado');
+            res.send({status: 1, msg: 'Deleted product'});
         }else{
-            res.send('El producto no existe');
+            res.send('The product does not exist');
         }
     }catch(error){
         res.status(500).send('Error al obtener los datos');
