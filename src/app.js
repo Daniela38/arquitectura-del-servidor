@@ -15,6 +15,7 @@ import mongoose from 'mongoose';
 import passport from 'passport';
 import initializePassport from './config/passport.config.js';
 import cookieParser from 'cookie-parser';
+import config from './config/config.js';
 
 //Express middlewares
 const app = express();
@@ -28,8 +29,8 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'handlebars');
 
 //mongoDB
-const MONGO = (`mongodb+srv://danizaccarello:danizaccarello@cluster0.446hjvi.mongodb.net/ecommerce`);
-mongoose.connect(MONGO, {
+//const MONGO = `mongodb+srv://danizaccarello:danizaccarello@cluster0.446hjvi.mongodb.net/ecommerce`;
+mongoose.connect(config.dbUrl, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
@@ -40,15 +41,15 @@ mongoose.connect(MONGO, {
 });
 
 //Session
-app.use(session({
+/*app.use(session({
     store: new MongoStore({
-        mongoUrl: MONGO,
+        mongoUrl: config.dbUrl,
         ttl: 3600
     }),
     secret: "SecretSession",
     resave: false,
     saveUninitialized: false
-}))
+}))*/
 
 //Public
 app.use('/files', express.static(path.join(__dirname + './public')));
@@ -67,8 +68,7 @@ app.use('/', viewsRouter);
 
 
 //Server
-const PORT = 8080;
-const httpServer = app.listen(PORT, () => console.log('Listening on ' + PORT));
+const httpServer = app.listen(config.port, () => console.log('Listening on ' + config.port));
 
 //Socket.io
 const io = new Server(httpServer);

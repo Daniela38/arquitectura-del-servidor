@@ -2,11 +2,12 @@ import cookieParser from 'cookie-parser';
 import { Router } from 'express';
 //import userModel from '../dao/models/users.model.js';
 import passport from 'passport';
+import config from '../config/config.js';
 
 const router = Router();
-router.use(cookieParser());
+router.use(cookieParser(config.privateKey));
 
-router.post('/register', passport.authenticate('register', { failureRedirect: '/api/sessions/failregister '}), async (req, res) => {
+router.post('/register', passport.authenticate('register', { session: false}), async (req, res) => {
     /*req.session.user = {
         name: `${req.user.first_name} ${req.user.last_name}`,
         email: req.user.email,
@@ -95,9 +96,10 @@ router.get('/current', passport.authenticate("current", { session: false }), (re
 
 router.get('/github', passport.authenticate('github', { scope: ['user: email' ] }), async (req, res) => { });
 
-router.get('/githubcallback', passport.authenticate('github', { failureRedirect: 'api/sessions/login' }), async (req, res) => {
-    req.session.user = req.user;
-    res.redirect('/products');
+router.get('/githubcallback', passport.authenticate('github', { session: false }), async (req, res) => {
+    //req.session.user = req.user;
+    res.cookie("loginCookieToken", req.user, {httpOnly: true}).redirect('/products');
+    //res.redirect('/products');
 });
 
 router.post('/logout', (req, res) => {

@@ -1,16 +1,27 @@
 import{ Router } from "express";
 import DbProductManager from "../dao/managers/DBProductManager.js";
 import CartManager from "../dao/managers/DBCartManager.js";
+import cookieParser from "cookie-parser";
+import config from '../config/config.js';
+import { jwtVerify, cookieExtractor } from "../utils/utils.js";
 
 const router = Router();
+router.use(cookieParser(config.privateKey));
 
 const publicAccess = (req, res, next) => {
-    if (req.session.user) return res.redirect('/products');
+    const token = cookieExtractor(req);
+    if (token && jwtVerify(token)) {
+        return res.redirect('/products');
+    }
     next();
 }
 
 const privateAccess = (req, res, next) => {
-    if(!req.session.user) return res.redirect('/login');
+    const token = cookieExtractor(req);
+    const verifiedToken = jwtVerify(token);
+    if(!token || !verifiedToken) {
+        return res.redirect('/login');
+    }
     next();
 }
 

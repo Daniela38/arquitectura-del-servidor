@@ -4,8 +4,9 @@ import local from "passport-local";
 import userModel from "../dao/models/users.model.js";
 import { createHash, isValidPassword } from "../utils/utils.js";
 import { default as token } from 'jsonwebtoken';
-import { generateToken, authToken, PRIVATE_KEY } from "../utils/utils.js";
+import { generateToken, cookieExtractor, authToken } from "../utils/utils.js";
 import GitHubStrategy from "passport-github2";
+import config from "./config.js";
 
 const JWTStrategy = jwt.Strategy;
 const ExtractJWT = jwt.ExtractJwt;
@@ -14,7 +15,7 @@ const LocalStrategy = local.Strategy;
 const initializePassport = () => {
     passport.use('current', new JWTStrategy({
         jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
-        secretOrKey: PRIVATE_KEY
+        secretOrKey: config.privateKey
     }, async (jwt_payload, done) => {
         try {
             return done(null, jwt_payload)
@@ -69,18 +70,19 @@ const initializePassport = () => {
     }, async (accessToken, refreshToken, profile, done) => {
         try {
             let user = await userModel.findOne({email: profile._json.email})
-            if(user) {
-                return done(null, user)
+            if(!user) {
+                user = {
+                    first_name: profile._json.name,
+                    last_name: '',
+                    email: profile._json.email,
+                    age: 1,
+                    password: ''
+                }
+                user = await userModel.create(user)
             }
-            const newUser = {
-                first_name: profile._json.name,
-                last_name: '',
-                email: profile._json.email,
-                age: 1,
-                password: ''
-            }
-            user = await userModel.create(newUser)
-            return done(null, user)
+            const { password: pass, ...userNoPass } = user._doc;
+            const jwt = generateToken(userNoPass);
+            return done(null, jwt)
         } catch (error) {
             return done({ message: 'Error creating user' });
         }
@@ -97,14 +99,6 @@ const initializePassport = () => {
             return done({message: "Error deserializing user"});
         }
     });
-};
-
-const cookieExtractor = (req) => {
-    let token = null;
-    if (req && req.cookies) {
-        return token = req?.cookies['loginCookieToken']
-    }
-    return token
 };
 
 export default initializePassport;

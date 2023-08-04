@@ -3,8 +3,7 @@ import { dirname } from 'path';
 import path from 'path';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-
-export const PRIVATE_KEY = "loginToken";
+import config from '../config/config.js';
 
 //bcrypt
 export const createHash = (password) => bcrypt.hashSync(password, bcrypt.genSaltSync(10));
@@ -12,16 +11,35 @@ export const isValidPassword = (user, password) => bcrypt.compareSync(password, 
 
 //Token
 export const generateToken = (user) => {
-    const token = jwt.sign({ user }, PRIVATE_KEY, { expiresIn: '1d' });
+    const token = jwt.sign({ user }, config.privateKey, { expiresIn: '1d' });
     return token;
 }
+
+//Cookie Extraxtor
+export const cookieExtractor = (req) => {
+    let token = null;
+    if (req && req.cookies) {
+        return token = req?.cookies['loginCookieToken']
+    }
+    return token
+};
+
+//JWT Verify
+export const jwtVerify = (token) => {
+    try{
+        const token = jwt.verify(token, config.privateKey);
+        return token
+    } catch (error) {
+        return false
+    }
+};
 
 //authToken
 export const authToken = (req, res, next) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) return res.status(401).send({ status: "error", error: "Unauthorized" })
     const token = authHeader.split(' ')[1];
-    jwt.verify(token, PRIVATE_KEY, (error, credentials) => {
+    jwt.verify(token, config.privateKey, (error, credentials) => {
         if (error) return res.status(401).send({ status: "error", error: "Unauthorized" })
         req.user = credentials.user;
         next();
