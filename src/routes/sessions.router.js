@@ -2,7 +2,7 @@ import cookieParser from 'cookie-parser';
 import { Router } from 'express';
 //import userModel from '../dao/models/users.model.js';
 import passport from 'passport';
-import config from '../config/config.js';
+import config from '../config/dotenv.config.js';
 
 const router = Router();
 router.use(cookieParser(config.privateKey));

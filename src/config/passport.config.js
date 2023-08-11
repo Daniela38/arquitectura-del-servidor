@@ -6,7 +6,7 @@ import { createHash, isValidPassword } from "../utils/utils.js";
 import { default as token } from 'jsonwebtoken';
 import { generateToken, cookieExtractor, authToken } from "../utils/utils.js";
 import GitHubStrategy from "passport-github2";
-import config from "./config.js";
+import config from "./dotenv.config.js";
 
 const JWTStrategy = jwt.Strategy;
 const ExtractJWT = jwt.ExtractJwt;

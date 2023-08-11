@@ -3,7 +3,7 @@ import { dirname } from 'path';
 import path from 'path';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import config from '../config/config.js';
+import config from '../config/dotenv.config.js';
 
 //bcrypt
 export const createHash = (password) => bcrypt.hashSync(password, bcrypt.genSaltSync(10));

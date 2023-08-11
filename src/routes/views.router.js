@@ -2,7 +2,7 @@ import{ Router } from "express";
 import DbProductManager from "../dao/managers/DBProductManager.js";
 import CartManager from "../dao/managers/DBCartManager.js";
 import cookieParser from "cookie-parser";
-import config from '../config/config.js';
+import config from '../config/dotenv.config.js';
 import { jwtVerify, cookieExtractor } from "../utils/utils.js";
 
 const router = Router();

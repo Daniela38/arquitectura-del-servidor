@@ -1,11 +1,18 @@
 import { Router } from "express";
 import { updatedProducts } from "../utils/socketUtils.js";
 import DbProductManager from "../dao/managers/DBProductManager.js";
+import { getProducts, getProductsById, addProduct, updateProduct, deleteProduct } from '../controllers/products.controller.js';
 
 const router = Router();
-const dbProductManager = new DbProductManager();
+//const dbProductManager = new DbProductManager();
 
-router.get('/', async(req,res) => {
+router.get('/', getProducts);
+router.get('/:id', getProductsById);
+router.post('/', addProduct);
+router.put('/:id', updateProduct);
+router.delete('/:id', deleteProduct);
+
+/*router.get('/', async(req,res) => {
     try{
         const {limit = 10, page = 1, sort} = req.query;
         const products = await dbProductManager.getProducts(limit, page, sort);
@@ -13,9 +20,9 @@ router.get('/', async(req,res) => {
     }catch(error){
         res.status(500).send('Error al obtener los datos');
     }
-});
+});*/
 
-router.get('/:id', async(req, res) => {
+/*router.get('/:id', async(req, res) => {
     try{
         const id = req.params.id;
         const productById = await dbProductManager.getProductsById(id);
@@ -23,9 +30,9 @@ router.get('/:id', async(req, res) => {
     }catch(error){
         res.status(500).send('Error al obtener los datos');
     }
-});
+});*/
 
-router.post('/', async(req, res) => {
+/*router.post('/', async(req, res) => {
     try{
         const newProductFields = req.body;
         const newProduct = await dbProductManager.addProduct(newProductFields);
@@ -34,9 +41,9 @@ router.post('/', async(req, res) => {
     }catch(error){
         res.status(500).send({status: 0, msg: error.message});
     }
-});
+});*/
 
-router.put('/:id', async(req, res) => {
+/*router.put('/:id', async(req, res) => {
     try{
         const {id} = req.params;
         const newField = req.body;
@@ -47,9 +54,9 @@ router.put('/:id', async(req, res) => {
     }catch(error){
         res.status(404).send({status: 0, msg: error.message});
     }
-});
+});*/
 
-router.delete('/:id', async(req, res) => {
+/*router.delete('/:id', async(req, res) => {
     try{
         const id = req.params.id;
         const deletedProduct =  await dbProductManager.deleteProduct(id);
@@ -62,6 +69,6 @@ router.delete('/:id', async(req, res) => {
     }catch(error){
         res.status(500).send('Error al obtener los datos');
     }
-});
+});*/
 
 export default router;

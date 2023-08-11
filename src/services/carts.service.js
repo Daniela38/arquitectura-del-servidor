@@ -1,15 +1,15 @@
-import CartsModel from "../models/carts.model.js";
-import ProductsModel from "../models/products.model.js";
+import DbCartManager from "../dao/managers/DBCartManager";
+import DbProductManager from "../dao/managers/DBProductManager";
 
-class DbCartManager {
+export class CartsService {
     constructor() {
-        this.cartModel = CartsModel;
-        this.productModel = ProductsModel;
+        this.cartManager = new DbCartManager();
+        this.productManager = new DbProductManager();
     }
 
     async createCart(){
         try {
-            const newCart = await this.cartModel.create({ products: [] });
+            const newCart = await this.cartManager.createCart();
             return newCart
         } catch(error) {
             throw new Error('Error');
@@ -18,7 +18,7 @@ class DbCartManager {
 
     async getCart(cartId){
         try {
-            const cart = await this.cartModel.findOne(cartId);
+            const cart = await this.cartManager.getCart(cartId);
             if(!cart){
                 throw new Error('Cart not found');
             }
@@ -30,14 +30,14 @@ class DbCartManager {
 
     async addToCart(cartId, productId){
         try{
-            const cart = await this.cartModel.findOne(cartId);
+            const cart = await this.cartManager.getCart(cartId);
             if(!cart){
                 throw new Error('Cart not found');
             }
             if(!productId){
                 throw new Error('Product ID is required');
             }
-            const product = await this.productModel.findOne(productId);
+            const product = await this.productManager.getCart(productId);
             if(!product){
                 throw new Error('Product not found');
             }
@@ -47,30 +47,16 @@ class DbCartManager {
             } else{
                 cart.products.push({productId: productId, quantity: 1});
             }
-            await cart.save();
+            await this.cartManager.updateCartProducts(cartId, cart.products);
             return cart;
         } catch(error) {
             throw new Error('Error');
         }
     }
 
-    async updateCartProducts(cartId, newCartProducts){
-        try{
-            const cart = await this.cartModel.findById(cartId);
-            if(!newCartProducts){
-                throw new Error('Cart products are required');
-            }
-            cart.products = newCartProducts;
-            await cart.save();
-            return cart
-        } catch(error){
-            throw new Error('Error');
-        }
-    } 
-
     async removeFromCart(cartId, productId){
         try{
-            const cart = await this.cartModel.findOne(cartId);
+            const cart = await this.cartManager.getCart(cartId);
             if(!cart){
                 throw new Error('Cart not found');
             }
@@ -85,7 +71,7 @@ class DbCartManager {
             if(existingProduct.quantity === 0){
                 cart.products = cart.products.filter((product) => product.productId !== productId);
             }
-            await cart.save();
+            await this.cartManager.updateCartProducts(cartId, cart.products);
             return cart 
         } catch(error) {
             throw new Error('Error');
@@ -94,7 +80,7 @@ class DbCartManager {
 
     async updateProductQuantity(cartId, productId, quantity){
         try{
-            const cart = await this.CartsModel.findById(cartId);
+            const cart = await this.cartManager.getCart(cartId);
             if(!cart){
                 throw new Error('Cart not found');
             }
@@ -112,23 +98,24 @@ class DbCartManager {
                 throw new Error('Quantity cannot be zero or negative');
             }
             existingProduct.quantity = quantity;
-            await cart.save();
+            await this.cartManager.updateCartProducts(cartId, cart.products);
             return cart;
         } catch(error){
             throw new Error('Error');
         }
     } 
 
-    async deleteCart(cartId) {
-        try {
-            const cart = await this.cartModel.findByIdAndDelete(cartId);
+    async emptyCart(cartId){
+        try{
+            const cart = await this.cartManager.getCart(cartId);
             if(!cart){
                 throw new Error('Cart not found');
             }
-        } catch(error) {
+            cart.products = [];
+            await this.cartManager.updateCartProducts(cartId, cart.products);
+            return cart
+        }catch(error){
             throw new Error('Error');
         }
     }
 }
-
-export default DbCartManager;
