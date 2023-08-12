@@ -28,7 +28,7 @@ class DbCartManager {
         }
     }
 
-    async addToCart(cartId, productId){
+    /*async addToCart(cartId, productId){
         try{
             const cart = await this.cartModel.findOne(cartId);
             if(!cart){
@@ -52,7 +52,7 @@ class DbCartManager {
         } catch(error) {
             throw new Error('Error');
         }
-    }
+    }*/
 
     async updateCartProducts(cartId, newCartProducts){
         try{
@@ -68,7 +68,7 @@ class DbCartManager {
         }
     } 
 
-    async removeFromCart(cartId, productId){
+    /*async removeFromCart(cartId, productId){
         try{
             const cart = await this.cartModel.findOne(cartId);
             if(!cart){
@@ -90,9 +90,9 @@ class DbCartManager {
         } catch(error) {
             throw new Error('Error');
         }
-    }
+    }*/
 
-    async updateProductQuantity(cartId, productId, quantity){
+    /*async updateProductQuantity(cartId, productId, quantity){
         try{
             const cart = await this.CartsModel.findById(cartId);
             if(!cart){
@@ -117,9 +117,9 @@ class DbCartManager {
         } catch(error){
             throw new Error('Error');
         }
-    } 
+    }*/
 
-    async deleteCart(cartId) {
+    /*async deleteCart(cartId) {
         try {
             const cart = await this.cartModel.findByIdAndDelete(cartId);
             if(!cart){
@@ -128,7 +128,7 @@ class DbCartManager {
         } catch(error) {
             throw new Error('Error');
         }
-    }
+    }*/
 }
 
 export default DbCartManager;

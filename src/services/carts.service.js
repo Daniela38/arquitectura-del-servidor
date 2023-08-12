@@ -1,7 +1,7 @@
-import DbCartManager from "../dao/managers/DBCartManager";
-import DbProductManager from "../dao/managers/DBProductManager";
+import DbCartManager from "../dao/managers/DBCartManager.js";
+import DbProductManager from "../dao/managers/DBProductManager.js";
 
-export class CartsService {
+class CartsService {
     constructor() {
         this.cartManager = new DbCartManager();
         this.productManager = new DbProductManager();
@@ -119,3 +119,5 @@ export class CartsService {
         }
     }
 }
+
+export default CartsService;

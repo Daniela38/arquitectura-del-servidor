@@ -1,8 +1,18 @@
 import { Router } from "express";
 import CartManager from "../dao/CartManager.js";
+import cartControlller from '../controllers/carts.controller.js'
 
 const router = Router();
-const cartManager = new CartManager('./data/carts.json');
+
+router.post('/', cartControlller.createCart);
+router.get('/:cartId', cartControlller.getCart);
+router.put('/cartId', cartControlller.updateCart);
+router.post('/cartId/products/:productId', cartControlller.addProductToCart);
+router.delete('/:cartId/products/productId', cartControlller.removeProductFromCart);
+router.put('/:cartId/products/productId', cartControlller.updateProductQuantity);
+router.delete('/:cartId', cartControlller.emptyCart);
+
+/*const cartManager = new CartManager('./data/carts.json');
 
 router.post('/', async(req,res) => {
     try{
@@ -76,6 +86,6 @@ router.delete('/:cid', async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: error.message});
     }
-});
+});*/
 
 export default router;
