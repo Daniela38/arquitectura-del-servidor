@@ -1,20 +1,22 @@
 import { Router } from "express";
-import MessagesManager from "../dao/managers/MessagesManager.js";
-
-const messagesManager = new MessagesManager();
+import messagesController from "../controllers/messages.controller.js";
 
 const router = Router();
 
-router.get('/', async (req, res) => {
+router.get('/', messagesController.getMessages);
+
+/*router.get('/', async (req, res) => {
     try {
         const messages = await messagesManager.getMessages();
         res.send({status: 1, messages: messages});
     } catch (error) {
         res.status(500).send({status: 0, msg: error.message});
     }
-});
+});*/
 
-router.post('/', async (req, res) => {
+router.post('/', messagesController.postMessage);
+
+/*router.post('/', async (req, res) => {
     try {
         const { user, message } = req.body;
         const newMessage = await messagesManager.addMessage(user, message);
@@ -22,6 +24,6 @@ router.post('/', async (req, res) => {
     } catch (error) {
         res.status(500). send({status: 0, msg: error.message});
     }
-});
+});*/
 
 export default router;
