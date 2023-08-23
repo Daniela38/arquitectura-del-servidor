@@ -24,6 +24,9 @@ export const cookieExtractor = (req) => {
     return token
 };
 
+//Authorization
+
+
 //JWT Verify
 export const jwtVerify = (token) => {
     try{

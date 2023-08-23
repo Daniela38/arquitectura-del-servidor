@@ -1,6 +1,6 @@
 import DbProductManager from "../dao/managers/DBProductManager.js";
 
-export class ProductsService {
+class ProductsService {
     constructor() {
         this.dao = new DbProductManager();
     }
@@ -25,3 +25,5 @@ export class ProductsService {
         return await this.dao.deleteProduct(id);
     }
 }
+
+export default ProductsService;
