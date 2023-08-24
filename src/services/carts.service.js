@@ -46,6 +46,7 @@ class CartsService {
 
     async addToCart(cartId, productId){
         try{
+            let stockControl = 0;
             const cart = await this.cartRepository.getCart(cartId);
             if(!cart){
                 throw new Error('Cart not found');
@@ -60,10 +61,12 @@ class CartsService {
             const existingProduct = cart.products.find((product) => product.productId === productId);
             if(existingProduct){
                 existingProduct.quantity += 1;
+                stockControl = existingProduct.quantity;
             } else{
                 cart.products.push({productId: productId, quantity: 1});
             }
-            await this.cartManager.updateCartProducts(cartId, cart.products);
+            await this.checkProductStock(productId, stockControl);
+            await this.cartRepository.updateCartProducts(cartId, cart.products);
             return cart;
         } catch(error) {
             throw new Error('Error');
@@ -114,7 +117,7 @@ class CartsService {
                 throw new Error('Quantity cannot be zero or negative');
             }
             existingProduct.quantity = quantity;
-            await this.cartRepository.updateCartProducts(cartId, cart.products);
+            await this.cartRepository.updateCart(cartId, cart.products);
             return cart;
         } catch(error){
             throw new Error('Error');
@@ -128,14 +131,52 @@ class CartsService {
                 throw new Error('Cart not found');
             }
             cart.products = [];
-            await this.cartRepository.updateCartProducts(cartId, cart.products);
+            await this.cartRepository.updateCart(cartId, cart.products);
             return cart
         }catch(error){
             throw new Error('Error');
         }
     }
 
-    
+    addProductsToCart = async (cartId, products) => {
+        try {
+            const cart = await this.cartRepository.getCart(cartId);
+            if (!cart) {
+                throw new Error('Cart not found');
+            }
+            if (!products || products.length === 0) {
+                throw new Error('Invalid product list');
+            }
+            const existingProducts = cart.products.map((product) => product.productId);
+            const productsToAdd = [];
+            const productsToUpdate = [];
+            for (const productData of products) {
+                const { productId, quantity } = productData;
+                if (!productId) {
+                    throw new Error('Product ID is required');
+                }
+                if (!quantity || quantity <= 0) {
+                    throw new Error('Invalid quantity');
+                }
+                const product = await this.productService.getProductsById(productId);
+                if (!product) {
+                    throw new Error('Product not found');
+                }
+                if (existingProducts.includes(productId)) {
+                    const existingProduct = cart.products.find((product) => product.productId === productId);
+                    existingProduct.quantity += quantity;
+                    productsToUpdate.push(existingProduct);
+                } else {
+                    productsToAdd.push({ product: product, quantity: quantity });
+                }
+            }
+            cart.products.push(...productsToAdd);
+            await this.cartRepository.updateCart(cartId, cart.products);
+            return cart
+        } catch(error) {
+            throw new Error('Failed to add products to cart');
+        }
+    }
 
     checkoutCart = async (cartId, purchaser) => {
         try {
@@ -152,7 +193,7 @@ class CartsService {
             
             for (const product of products) {
                 try {
-                    await this.productService.updateProductStock(product.product._id.toString(), -product.quantity);
+                    await this.productService.updateProductStock(product.productId, -product.quantity);
                     productsPurchased.push(product);
                 } catch (error) {
                     productsNotPurchased.push(product);
@@ -166,7 +207,7 @@ class CartsService {
             await this.emptyCart(cartId);
             if (productsNotPurchased.length > 0) {
                 const newCartProducts = productsNotPurchased.map((product) => {
-                    return { productId: product.product._id.toString(), quantity: product.quantity }
+                    return { productId: product.productId, quantity: product.quantity }
                 });
                 await this.addProductsToCart(cartId, newCartProducts);
             }

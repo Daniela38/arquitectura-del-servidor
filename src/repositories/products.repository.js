@@ -1,4 +1,3 @@
-import { deleteProduct } from "../controllers/products.controller";
 
 export default class ProductsRepository {
     constructor(dao) {

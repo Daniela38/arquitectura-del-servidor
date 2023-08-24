@@ -1,16 +1,14 @@
 import { Router } from "express";
-import { updatedProducts } from "../utils/socketUtils.js";
-import DbProductManager from "../dao/managers/DBProductManager.js";
-import { getProducts, getProductsById, addProduct, updateProduct, deleteProduct } from '../controllers/products.controller.js';
+import productController from '../controllers/products.controller.js';
 
 const router = Router();
 //const dbProductManager = new DbProductManager();
 
-router.get('/', getProducts);
-router.get('/:id', getProductsById);
-router.post('/', addProduct);
-router.put('/:id', updateProduct);
-router.delete('/:id', deleteProduct);
+router.get('/', productController.getProducts);
+router.get('/:id', productController.getProductsById);
+router.post('/', productController.checkAdmin, productController.addProduct);
+router.put('/:id', productController.checkAdmin, productController.updateProduct);
+router.delete('/:id', productController.checkAdmin, productController.deleteProduct);
 
 /*router.get('/', async(req,res) => {
     try{

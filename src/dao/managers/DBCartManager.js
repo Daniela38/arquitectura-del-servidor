@@ -54,7 +54,7 @@ class DbCartManager {
         }
     }*/
 
-    async updateCartProducts(cartId, newCartProducts){
+    async updateCart(cartId, newCartProducts){
         try{
             const cart = await this.cartModel.findById(cartId);
             if(!newCartProducts){

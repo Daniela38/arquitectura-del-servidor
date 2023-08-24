@@ -86,6 +86,15 @@ const checkoutCart = async (req, res) => {
     }
 }
 
+export const checkUser = () => (req, res, next) => {
+    const user = req.user.user;
+    if (user && user.role === "user") {
+        next();
+    } else {
+        res.status(401).send('Error: you do not have permissions to perform this action');
+    }
+}
+
 export default {
     createCart,
     getCart,
@@ -93,5 +102,7 @@ export default {
     addProductToCart,
     removeProductFromCart,
     updateProductQuantity,
-    emptyCart
+    emptyCart,
+    checkoutCart,
+    checkUser
 };

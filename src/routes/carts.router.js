@@ -1,16 +1,17 @@
 import { Router } from "express";
 //import CartManager from "../dao/CartManager.js";
-import cartControlller from '../controllers/carts.controller.js'
+import cartControlller, { checkUser } from '../controllers/carts.controller.js'
 
 const router = Router();
 
 router.post('/', cartControlller.createCart);
 router.get('/:cartId', cartControlller.getCart);
 router.put('/cartId', cartControlller.updateCart);
-router.post('/cartId/products/:productId', cartControlller.addProductToCart);
+router.post('/cartId/products/:productId', checkUser, cartControlller.addProductToCart);
 router.delete('/:cartId/products/productId', cartControlller.removeProductFromCart);
 router.put('/:cartId/products/productId', cartControlller.updateProductQuantity);
 router.delete('/:cartId', cartControlller.emptyCart);
+router.post('/:cartId/checkout', cartControlller.checkoutCart);
 
 /*const cartManager = new CartManager('./data/carts.json');
 

@@ -36,10 +36,7 @@ class DbProductManager{
 
     async getProductsById(id){
         try{
-            const product = await this.productsModel.findOne({_id:id});
-            if(!product){
-                throw new Error('Product not found');
-            }
+            const product = await this.productsModel.findById(id);
             return product
         } catch(error){
             console.log('Error');
