@@ -1,10 +1,10 @@
-import CartsRepository from "../repositories/carts.repository.js";
+import { cartsRepository } from "../repositories/index.js";
 import ProductsService from "./products.service.js";
 import TicketService from "./tickets.services.js";
 
 class CartsService {
     constructor() {
-        this.cartRepository = new CartsRepository();
+        this.cartRepository = cartsRepository;
         this.productService = new ProductsService();
         this.ticketService = new TicketService();
     }
@@ -54,7 +54,7 @@ class CartsService {
             if(!productId){
                 throw new Error('Product ID is required');
             }
-            const product = await this.productService.getCart(productId);
+            const product = await this.productService.getProductsById(productId);
             if(!product){
                 throw new Error('Product not found');
             }

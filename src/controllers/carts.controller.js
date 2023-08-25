@@ -86,7 +86,7 @@ const checkoutCart = async (req, res) => {
     }
 }
 
-export const checkUser = () => (req, res, next) => {
+const checkUser = async (req, res, next) => {
     const user = req.user.user;
     if (user && user.role === "user") {
         next();

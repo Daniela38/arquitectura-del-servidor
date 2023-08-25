@@ -18,7 +18,7 @@ class DbCartManager {
 
     async getCart(cartId){
         try {
-            const cart = await this.cartModel.findOne(cartId);
+            const cart = await this.cartModel.findById(cartId);
             if(!cart){
                 throw new Error('Cart not found');
             }
