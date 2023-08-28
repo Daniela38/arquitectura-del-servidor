@@ -1,17 +1,21 @@
 import { Router } from "express";
 //import CartManager from "../dao/CartManager.js";
-import cartControlller from '../controllers/carts.controller.js';
+import cartController from '../controllers/carts.controller.js';
+import passport from 'passport';
+import cookieParser from "cookie-parser";
+import config from '../config/dotenv.config.js';
 
 const router = Router();
+router.use(cookieParser(config.privateKey));
 
-router.post('/', cartControlller.createCart);
-router.get('/:cartId', cartControlller.getCart);
-router.put('/cartId', cartControlller.updateCart);
-router.post('/cartId/products/:productId', cartControlller.checkUser, cartControlller.addProductToCart);
-router.delete('/:cartId/products/:productId', cartControlller.checkUser, cartControlller.removeProductFromCart);
-router.put('/:cartId/products/:productId', cartControlller.checkUser, cartControlller.updateProductQuantity);
-router.delete('/:cartId', cartControlller.checkUser, cartControlller.emptyCart);
-router.post('/:cartId/checkout', cartControlller.checkUser, cartControlller.checkoutCart);
+router.post('/', cartController.createCart);
+router.get('/:cartId', cartController.getCart);
+router.put('/:cartId', cartController.updateCart);
+router.post('/:cartId/products/:productId', passport.authenticate("current", { session: false }), cartController.checkUser, cartController.addProductToCart);
+router.delete('/:cartId/products/:productId', passport.authenticate("current", { session: false }), cartController.checkUser, cartController.removeProductFromCart);
+router.put('/:cartId/products/:productId', passport.authenticate("current", { session: false }), cartController.checkUser, cartController.updateProductQuantity);
+router.delete('/:cartId', passport.authenticate("current", { session: false }), cartController.checkUser, cartController.emptyCart);
+router.post('/:cartId/checkout', passport.authenticate("current", { session: false }), cartController.checkUser, cartController.checkoutCart);
 
 /*const cartManager = new CartManager('./data/carts.json');
 

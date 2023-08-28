@@ -138,7 +138,7 @@ class CartsService {
         }
     }
 
-    addProductsToCart = async (cartId, products) => {
+    addProductToCart = async (cartId, products) => {
         try {
             const cart = await this.cartRepository.getCart(cartId);
             if (!cart) {
