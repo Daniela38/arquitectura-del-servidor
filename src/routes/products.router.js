@@ -1,14 +1,18 @@
 import { Router } from "express";
 import productController from '../controllers/products.controller.js';
+import passport from 'passport';
+import cookieParser from "cookie-parser";
+import config from '../config/dotenv.config.js';
 
 const router = Router();
+router.use(cookieParser(config.privateKey));
 //const dbProductManager = new DbProductManager();
 
 router.get('/', productController.getProducts);
 router.get('/:id', productController.getProductsById);
-router.post('/', productController.checkAdmin, productController.addProduct);
-router.put('/:id', productController.checkAdmin, productController.updateProduct);
-router.delete('/:id', productController.checkAdmin, productController.deleteProduct);
+router.post('/', passport.authenticate("current", { session: false }), productController.checkAdmin, productController.addProduct);
+router.put('/:id', passport.authenticate("current", { session: false }), productController.checkAdmin, productController.updateProduct);
+router.delete('/:id', passport.authenticate("current", { session: false }), productController.checkAdmin, productController.deleteProduct);
 
 /*router.get('/', async(req,res) => {
     try{

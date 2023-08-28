@@ -25,6 +25,15 @@ export const cookieExtractor = (req) => {
 };
 
 //Authorization
+export const checkUser = (req, res, next) => {
+    const role = req.user.role;
+    if ( role === "user" ) {
+        next();
+    } else {
+        res.status(401).send('Error: you do not have permissions to perform this action');
+    }
+}
+
 
 
 //JWT Verify

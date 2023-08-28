@@ -60,13 +60,13 @@ const deleteProduct = async(req, res) => {
     }
 }
 
-const checkAdmin = () => (req, res, next) => {
-    const user = req.user.user;
-    if ( user && user.role === 'user') {
-        next();
-    } else {
-        res.status(401).send('Error: you do not have permissions to perform this action');
-    }
+const checkAdmin = async (req, res, next) => {
+        const user = req.user.user;
+        if ( user && user.role === 'admin') {
+            next();
+        } else {
+            res.status(401).send('Error: you do not have permissions to perform this action');
+        }
 }
 
 export default {

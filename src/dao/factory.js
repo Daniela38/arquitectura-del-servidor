@@ -2,10 +2,11 @@ import DbProductManager from "./managers/DBProductManager.js";
 import DbCartManager from "./managers/DBCartManager.js";
 import MessagesManager from "./managers/MessagesManager.js";
 import TicketManager from "./managers/TicketsManager.js";
+import config from '../config/dotenv.config.js';
 
 export class ProductsDaoFactory {
     static getDao() {
-        switch (process.env.PERSISTANCE) {
+        switch (config.persistence) {
             case 'MONGODB':
                 return new DbProductManager();
             default:
@@ -16,7 +17,7 @@ export class ProductsDaoFactory {
 
 export class CartsDaoFactory {
     static getDao() {
-        switch (process.env.PERSISTANCE) {
+        switch (config.persistence) {
             case 'MONGODB':
                 return new DbCartManager();
             default:
@@ -27,7 +28,7 @@ export class CartsDaoFactory {
 
 export class MessagesDaoFactory {
     static getDao() {
-        switch (process.env.PERSISTANCE) {
+        switch (config.persistence) {
             case 'MONGODB':
                 return new MessagesManager();
             default:
@@ -38,7 +39,7 @@ export class MessagesDaoFactory {
 
 export class TicketsDaoFactory {
     static getDao() {
-        switch (process.env.PERSISTANCE) {
+        switch (config.persistence) {
             case 'MONGODB':
                 return new TicketManager();
             default:
