@@ -1,6 +1,7 @@
 import { cartsRepository } from "../repositories/index.js";
 import ProductsService from "./products.service.js";
 import TicketService from "./tickets.services.js";
+import CustomError from "../utils/errorHandler/CustomError.js";
 
 class CartsService {
     constructor() {
@@ -14,7 +15,10 @@ class CartsService {
             const newCart = await this.cartRepository.createCart();
             return newCart
         } catch(error) {
-            throw new Error('Error');
+            CustomError.createError({
+                name: 'createCart Error',
+                message: `Failed to add cart: ${error.message}`,
+            });
         }
     }
 
@@ -22,7 +26,11 @@ class CartsService {
         try {
             const cart = await this.cartRepository.getCart(cartId);
             if(!cart){
-                throw new Error('Cart not found');
+                CustomError.createError({
+                    name: 'getCart Error',
+                    message: 'Cart not found',
+                    recievedParams: { cartId }
+                });  
             }
             return cart;
         } catch (error) {
@@ -34,10 +42,18 @@ class CartsService {
         try {
             const product = await this.productService.getProductsById(productId);
             if (!product) {
-                throw new Error('Product not found');
+                CustomError.createError({
+                    name: 'checkProductStock Error',
+                    message: 'Product not found',
+                    recievedParams: { productId }
+                });  
             }
             if (product.stock < quantity) {
-                throw new Error('Insufficient stock');
+                CustomError.createError({
+                    name: 'checkProductStock Error',
+                    message: 'Insufficient stock',
+                    recievedParams: { quantity }
+                });    
             }
         } catch (error) {
             throw error;
@@ -49,14 +65,25 @@ class CartsService {
             let stockControl = 0;
             const cart = await this.cartRepository.getCart(cartId);
             if(!cart){
-                throw new Error('Cart not found');
+                CustomError.createError({
+                    name: 'addToCart Error',
+                    message: 'Cart not found',
+                    recievedParams: { cartId }
+                });  
             }
             if(!productId){
-                throw new Error('Product ID is required');
+                CustomError.createError({
+                    name: 'addToCart Error',
+                    message: 'Product ID is required'
+                });  
             }
             const product = await this.productService.getProductsById(productId);
             if(!product){
-                throw new Error('Product not found');
+                CustomError.createError({
+                    name: 'addToCart Error',
+                    message: 'Product not found',
+                    recievedParams: { productId }
+                });   
             }
             const existingProduct = cart.products.find((product) => product.productId === productId);
             if(existingProduct){
@@ -77,14 +104,25 @@ class CartsService {
         try{
             const cart = await this.cartRepository.getCart(cartId);
             if(!cart){
-                throw new Error('Cart not found');
+                CustomError.createError({
+                    name: 'removeFromCart Error',
+                    message: 'Cart not found',
+                    recievedParams: { cartId }
+                });    
             }
             if(!productId){
-                throw new Error('Product ID is required');
+                CustomError.createError({
+                    name: 'removeFromCart Error',
+                    message: 'Product ID is required'
+                });   
             }
             const existingProduct = cart.products.find((product) => product.productId === productId);
             if(!existingProduct){
-                throw new Error('Product not found in cart');
+                CustomError.createError({
+                    name: 'removeFromCart Error',
+                    message: 'Product not found in cart',
+                    recievedParams: { productId }
+                }); 
             }
             existingProduct.quantity -= 1;
             if(existingProduct.quantity === 0){
@@ -101,20 +139,38 @@ class CartsService {
         try{
             const cart = await this.cartRepository.getCart(cartId);
             if(!cart){
-                throw new Error('Cart not found');
+                CustomError.createError({
+                    name: 'updateProductQuantity Error',
+                    message: 'Cart not found',
+                    recievedParams: { cartId }
+                }); 
             }
             if(!productId){
-                throw new Error('Product ID is required');
+                CustomError.createError({
+                    name: 'updateProductQuantity Error',
+                    message: 'Product ID is required'
+                });  
             }
             const existingProduct = cart.products.find((product) => product.productId === productId);
             if(!existingProduct){
-                throw new Error('Product not found in cart');
+                CustomError.createError({
+                    name: 'updateProductQuantity Error',
+                    message: 'Product not found in cart',
+                    recievedParams: { productId }
+                }); 
             }
             if(!quantity){
-                throw new Error('Quantity is required');
+                CustomError.createError({
+                    name: 'updateProductQuantity Error',
+                    message: 'Quantity is required'
+                });   
             }
             if(quantity <= 0){
-                throw new Error('Quantity cannot be zero or negative');
+                CustomError.createError({
+                    name: 'updateProductQuantity Error',
+                    message: 'Quantity cannot be zero or negative',
+                    recievedParams: { quantity }
+                });   
             }
             existingProduct.quantity = quantity;
             await this.cartRepository.updateCart(cartId, cart.products);
@@ -128,13 +184,20 @@ class CartsService {
         try{
             const cart = await this.cartRepository.getCart(cartId);
             if(!cart){
-                throw new Error('Cart not found');
+                CustomError.createError({
+                    name: 'emptyCart Error',
+                    message: 'Cart not found',
+                    recievedParams: { cartId }
+                });    
             }
             cart.products = [];
             await this.cartRepository.updateCart(cartId, cart.products);
             return cart
         }catch(error){
-            throw new Error('Error');
+            CustomError.createError({
+                name: 'emptyCart Error',
+                message: `Failed to empty cart: ${error.message}`
+            }); 
         }
     }
 
@@ -142,10 +205,17 @@ class CartsService {
         try {
             const cart = await this.cartRepository.getCart(cartId);
             if (!cart) {
-                throw new Error('Cart not found');
+                CustomError.createError({
+                    name: 'addProductsToCart Error',
+                    message: 'Cart not found',
+                    recievedParams: { cartId }
+                });
             }
             if (!products || products.length === 0) {
-                throw new Error('Invalid product list');
+                CustomError.createError({
+                    name: 'addProductsToCart Error',
+                    message: 'Invalid product list'
+                });
             }
             const existingProducts = cart.products.map((product) => product.productId);
             const productsToAdd = [];
@@ -153,14 +223,24 @@ class CartsService {
             for (const productData of products) {
                 const { productId, quantity } = productData;
                 if (!productId) {
-                    throw new Error('Product ID is required');
+                    CustomError.createError({
+                        name: 'addProductsToCart Error',
+                        message: 'Product ID is required'
+                    });  
                 }
                 if (!quantity || quantity <= 0) {
-                    throw new Error('Invalid quantity');
+                    CustomError.createError({
+                        name: 'addProductsToCart Error',
+                        message: 'Valid quantity is required'
+                    });  
                 }
                 const product = await this.productService.getProductsById(productId);
                 if (!product) {
-                    throw new Error('Product not found');
+                    CustomError.createError({
+                        name: 'addProductsToCart Error',
+                        message: 'Product not found',
+                        recievedParams: { productId }
+                    });   
                 }
                 if (existingProducts.includes(productId)) {
                     const existingProduct = cart.products.find((product) => product.productId === productId);
@@ -174,18 +254,29 @@ class CartsService {
             await this.cartRepository.updateCart(cartId, cart.products);
             return cart
         } catch(error) {
-            throw new Error('Failed to add products to cart');
+            CustomError.createError({
+                name: 'addProductsToCart Error',
+                message: `Failed to add products to cart: ${error.message}`
+            }); 
         }
     }
 
     checkoutCart = async (cartId, purchaser) => {
         try {
             const cart = await this.cartRepository.getCart(cartId);
+            console.log(cartId)
             if (!cart) {
-                throw new Error('Cart not found');
+                CustomError.createError({
+                    name: 'checkoutCart Error',
+                    message: 'Cart not found',
+                    recievedParams: { cartId }
+                });   
             }
             if (cart.products.length === 0) {
-                throw new Error('Cart is empty')
+                CustomError.createError({
+                    name: 'checkoutCart Error',
+                    message: 'Cart is empty'
+                }); 
             }
             const products = cart.products;
             const productsPurchased = [];
@@ -201,7 +292,10 @@ class CartsService {
             }
             
             if (productsPurchased.length === 0) {
-                throw new Error('No products were purchased');
+                CustomError.createError({
+                    name: 'checkoutCart Error',
+                    message: 'No products were purchased'
+                });  
             }
 
             await this.emptyCart(cartId);
@@ -212,10 +306,13 @@ class CartsService {
                 await this.addProductsToCart(cartId, newCartProducts);
             }
             const remainingCart = await this.getCart(cartId);
-            const totalAmount = productsPurchased.reduce((total, product) => total + (product.product.price * product.quantity), 0);
+            const totalAmount = productsPurchased.reduce((total, product) => total + (product.price * product.quantity), 0);
             const newTicket = await this.ticketService.createTicket({ amount: totalAmount, purchaser: purchaser });
             if (!newTicket) {
-                throw new Error('Failed to create ticket');
+                CustomError.createError({
+                    name: 'checkoutCart Error',
+                    message: 'Failed to create ticket'
+                });
             }
             const purchaseCartResult = {
                 ticket: newTicket,
@@ -224,7 +321,10 @@ class CartsService {
             }
             return purchaseCartResult
         } catch (error) {
-            throw new Error('Failed to purchase cart: cart');
+            CustomError.createError({
+                name: 'checkoutCart Error',
+                message: `Failed to purchase cart: ${error.message}`
+            }); 
         }
     }
 }
