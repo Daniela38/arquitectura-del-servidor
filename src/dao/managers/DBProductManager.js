@@ -30,7 +30,7 @@ class DbProductManager{
                 });
             return products 
         } catch(error){
-            console.log('Error');
+            throw new Error('Error');
         }
     }
 
@@ -39,7 +39,7 @@ class DbProductManager{
             const product = await this.productsModel.findById(id);
             return product
         } catch(error){
-            console.log('Error');
+            throw new Error('Error');
         }
     }
 
@@ -48,7 +48,7 @@ class DbProductManager{
             const newProduct = await this.productsModel.create(bodyPorduct)
             return newProduct
         } catch(error) {
-            console.log('Error');
+            throw new Error('Error');
         }
     }
 
@@ -58,7 +58,7 @@ class DbProductManager{
             console.log(updateBodyProduct)
             return updatedProduct
         } catch(error) {
-            console.log('Error');
+            throw new Error('Error');
         }
     }
 
@@ -67,7 +67,7 @@ class DbProductManager{
             const productDeleted = this.productsModel.deleteOne({_id:id})
             return productDeleted
         } catch(error) {
-            console.log('Error');
+            throw new Error('Error');
         }
     }
 }

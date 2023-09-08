@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import config from './dotenv.config.js';
+import { loggerInfo } from '../utils/logger.js';
 
 export default function configureMongo(){
     mongoose.connect(config.dbUrl, {
@@ -7,8 +8,10 @@ export default function configureMongo(){
         useUnifiedTopology: true
     })
     .then((conn) =>{
-        console.log('Connected');
+        const info = loggerInfo();
+        info.info('Connected with mongoDB');
     }).catch((err) => {
-        console.log('Error');
+        const info = loggerInfo();
+        info.info('Error');
     });
 }

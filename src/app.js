@@ -10,8 +10,10 @@ import __dirname from './utils/utils.js';
 import routes from './routes/index.js';
 import config from './config/dotenv.config.js';
 import configureSocket from './config/socket.config.js';
+import { addLogger, loggerInfo } from './utils/logger.js';
 
 const app = express();
+app.use(addLogger);
 
 configureMiddlewares(app);
 
@@ -27,5 +29,8 @@ app.use('/files', express.static(path.join(__dirname + './public')));
 routes(app);
 
 //Server y Socket
-const httpServer = app.listen(config.port, () => console.log('Listening on ' + config.port));
+const httpServer = app.listen(config.port, () => {
+    const info = loggerInfo();
+    info.info(`The server is listening on port ${config.port}`);
+});
 configureSocket(httpServer, app);

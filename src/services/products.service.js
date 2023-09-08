@@ -9,6 +9,24 @@ class ProductsService {
         return await this.productRepository.getProducts(limit, page, sort, category, available);
     }
 
+    getAllMock = async() => {
+        const mockProducts = [];
+        const product = {
+            title: faker.commerce.productName(),
+            description: faker.commerce.productDescription(),
+            price: faker.commerce.price(),
+            status: faker.datatype.boolean(),
+            stock: faker.number.int({ min: 0, max: 50 }),
+            category: faker.commerce.productAdjective(),
+            thumbnails: [],
+            code: faker.string.uuid()
+        }
+        for (let i = 0; i < 100; i++) {
+            mockProducts.push(product);
+        }
+        return mockProducts
+    }
+
     getProductsById = async(id) => {
         try{
             const product = await this.productRepository.getProductsById(id);

@@ -1,7 +1,9 @@
 import { cartsRepository } from "../repositories/index.js";
 import ProductsService from "./products.service.js";
 import TicketService from "./tickets.services.js";
-import CustomError from "../utils/errorHandler/CustomError.js";
+import { generateCartError } from "./error/errorInfo.js";
+import CustomError from "./error/CustomError.js";
+import EErrors from "./error/enums.js";
 
 class CartsService {
     constructor() {
@@ -17,6 +19,8 @@ class CartsService {
         } catch(error) {
             CustomError.createError({
                 name: 'createCart Error',
+                cause: generateCartError(),
+                code: EErrors.ROUTING_ERROR,
                 message: `Failed to add cart: ${error.message}`,
             });
         }
@@ -28,8 +32,10 @@ class CartsService {
             if(!cart){
                 CustomError.createError({
                     name: 'getCart Error',
+                    cause: generateCartError(id),
+                    code: EErrors.ROUTING_ERROR,
                     message: 'Cart not found',
-                    recievedParams: { cartId }
+                    message: 'Cannot get cart'
                 });  
             }
             return cart;
@@ -41,19 +47,19 @@ class CartsService {
     checkProductStock = async (productId, quantity) => {
         try {
             const product = await this.productService.getProductsById(productId);
-            if (!product) {
+            /*if (!product) {
                 CustomError.createError({
                     name: 'checkProductStock Error',
                     message: 'Product not found',
                     recievedParams: { productId }
                 });  
-            }
+            }*/
             if (product.stock < quantity) {
-                CustomError.createError({
+                /*CustomError.createError({
                     name: 'checkProductStock Error',
                     message: 'Insufficient stock',
                     recievedParams: { quantity }
-                });    
+                });*/    
             }
         } catch (error) {
             throw error;
@@ -64,13 +70,13 @@ class CartsService {
         try{
             let stockControl = 0;
             const cart = await this.cartRepository.getCart(cartId);
-            if(!cart){
+            /*if(!cart){
                 CustomError.createError({
                     name: 'addToCart Error',
                     message: 'Cart not found',
                     recievedParams: { cartId }
                 });  
-            }
+            }*/
             if(!productId){
                 CustomError.createError({
                     name: 'addToCart Error',

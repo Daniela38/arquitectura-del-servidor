@@ -25,7 +25,6 @@ const updateCart = async (req, res) => {
     try {
         const cartId = req.params.cartId;
         const products = req.body.products;
-        console.log(cartId, products);
         const cart = await cartsService.addProductToCart(cartId, products);
         console.log(cartId, products);
         res.status(201).send({ status: 1, msg: 'Cart updated successfully', cartProducts: cart.products });
