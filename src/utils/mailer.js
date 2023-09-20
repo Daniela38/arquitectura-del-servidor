@@ -2,6 +2,15 @@ import nodemailer from 'nodemailer';
 import config from '../config/dotenv.config.js';
 import { default as token } from 'jsonwebtoken';
 
+export const mailConfig = {
+    service: config.mailing.SERVICE,
+    port: config.mailing.PORT,
+    auth:{
+        user: config.mailing.USER,
+        pass: config.mailing.PASSWORD
+    }
+}
+
 export const sendEmail = async (email) => {
     try {
         const mailConfig = {

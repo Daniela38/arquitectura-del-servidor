@@ -5,16 +5,17 @@ import passport from 'passport';
 import config from '../config/dotenv.config.js';
 import { validateResetPasswordToken } from '../utils/utils.js';
 import sessionsController from '../controllers/sessions.controller.js';
+import nodemailer from 'nodemailer';
 
 const router = Router();
 router.use(cookieParser(config.privateKey));
 
 router.post('/register', passport.authenticate('register', { session: false}), sessionsController.register);
 router.post('/login', passport.authenticate('login', { session:false }), sessionsController.login);
-router.post('/resetpassword', sessionsController.resetPassword);
-router.get('/resetpasswordvalidation/:token', validateResetPasswordToken, (req, res) => {
+router.get('/resetpassword/:email', sessionsController.sendEmail);
+/*router.get('/resetpasswordvalidation/:token', validateResetPasswordToken, (req, res) => {
     res.redirect(`/resetpassword/${req.params.token}`);
-});
+});*/
 router.get('/current', passport.authenticate("current", { session: false }), sessionsController.current);
 router.get('/github', passport.authenticate('github', { scope: ['user: email' ] }), sessionsController.github);
 router.get('/githubcallback', passport.authenticate('github'), sessionsController.githubCallback);
