@@ -46,6 +46,20 @@ export const authToken = (req, res, next) => {
     })
 }
 
+//Validate ResetPassword Token
+export const validateResetPasswordToken = (req, res, next) => {
+    try {
+        const token = req.params.token;
+        jwt.verify(token, config.privateKey);
+        const data = jwt.decode(token);
+        req.email = data.email;
+        req.token = token;
+        next();
+    } catch (error) {
+        throw error;
+    }
+}
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.join(dirname(__filename), `../`);
 
