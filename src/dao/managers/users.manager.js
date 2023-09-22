@@ -15,13 +15,13 @@ class UserMongoManager {
         }
     }
 
-    updateUser = async (userId, updatedFields) => {
+    /*updateUser = async (userId, updatedFields) => {
         try {
 
         } catch (error) {
             throw error;
         }
-    }
+    }*/
 }
 
 export default UserMongoManager;

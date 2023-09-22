@@ -14,6 +14,8 @@ export default class UserService {
         }
     }
 
+    
+
     /*createEmailJwt = (email) => {
         const jwt = token.sign({email}, config.privateKey, { expiresIn: '1h' });
         return jwt;

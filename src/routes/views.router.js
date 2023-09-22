@@ -3,7 +3,7 @@ import DbProductManager from "../dao/managers/DBProductManager.js";
 import CartManager from "../dao/managers/DBCartManager.js";
 import cookieParser from "cookie-parser";
 import config from '../config/dotenv.config.js';
-import { jwtVerify, cookieExtractor } from "../utils/utils.js";
+import { jwtVerify, cookieExtractor, authToken } from "../utils/utils.js";
 
 const router = Router();
 router.use(cookieParser(config.privateKey));
@@ -71,6 +71,10 @@ router.get('/carts/:cid', privateAccess, async (req, res) => {
     } catch (error) {
         res.status(500).send(error.message);
     }
+})
+
+router.get('/restore_password/:token', publicAccess, authToken, (req, res) => {
+    res.render('restore_password', { token: req.params.token });
 })
 
 export default router;

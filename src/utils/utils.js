@@ -39,14 +39,21 @@ export const authToken = (req, res, next) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) return res.status(401).send({ status: "error", error: "Unauthorized" })
     const token = authHeader.split(' ')[1];
-    jwt.verify(token, config.privateKey, (error, credentials) => {
+    token = req.params.token;
+    console.log(token)
+    jwt.verify(token, config.privateKey);
+    const data = jwt.decode(token);
+    req.email = data.email
+    next();
+    /*jwt.verify(token, config.privateKey, (error, credentials) => {
         if (error) return res.status(401).send({ status: "error", error: "Unauthorized" })
         req.user = credentials.user;
         next();
-    })
+    })*/
+
 }
 
-//Validate ResetPassword Token
+/////Validate ResetPassword Token
 export const validateResetPasswordToken = (req, res, next) => {
     try {
         const token = req.params.token;
@@ -54,6 +61,7 @@ export const validateResetPasswordToken = (req, res, next) => {
         const data = jwt.decode(token);
         req.email = data.email;
         req.token = token;
+        res.send('Verified token!');
         next();
     } catch (error) {
         throw error;
