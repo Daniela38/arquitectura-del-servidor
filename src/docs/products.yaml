@@ -1,0 +1,197 @@
+paths:
+  /api/products/:
+    get:
+      summary: Get all products
+      tags:
+        - Products
+      responses:
+        "200":
+          description: All products were successfully obtained from the database
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#components/schemas/Products"
+        "404":
+          description: None product in data base
+        "500":
+          description: Internal server error
+    post:
+      summary: Create a product in database
+      tags:
+        - Products
+      responses:
+        "200":
+          description: The product was created correctly
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Products"
+        "404":
+          description: Product could not be created
+        "500":
+          description: Internal Server Error
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/requestBodies/bodyProducts"
+  /api/products/{id}:
+    get:
+      summary: Get product by ID
+      tags:
+        - Products
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the product to get
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: The product was obtained correctly
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Products"
+        "404":
+          description: Product not found
+        "500":
+          description: Internal Server Error
+    put:
+      summary: Modify a product by its id
+      tags:
+        - Products
+      parameters:
+        - name: idUpdate
+          in: path
+          description: Product ID for update
+          required: true
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: The product was updated correctly
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Products"
+        "404":
+          description: Product not found
+        "500":
+          description: Internal Server Error
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/requestBodies/bodyProducts"
+    delete:
+      summary: Delete a product by its id
+      tags:
+        - Products
+      parameters:
+        - name: idDelete
+          in: path
+          description: Product ID for delete
+          required: true
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: The product was deleted correctly
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Products"
+        "404":
+          description: Product not found
+        "500":
+          description: Internal Server Error
+
+components:
+  schemas:
+    Products:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: A Mongo ID.
+        title:
+          type: String
+          description: Product Name
+        price:
+          type: Number
+          description: Product price
+        status:
+          type: Boolean
+          description: Product status
+        stock:
+          type: Number
+          description: Product stock
+        category:
+          type: String
+          description: Product category
+        thumbnails:
+          type: Array
+          description: Images for the product
+        code:
+          type: Number
+          description: A unique code for the product
+        owner:
+          type: String
+          description: Product owner
+      example:
+        _id: ObjectId("647fa8c9e46dbc5a20320181")
+        title: Product Example
+        price: 99.99
+        status: Product status (true or false)
+        stock: 100
+        category: Electronics
+        thumbnails: Product Images (as Array Type)
+        code: 12345
+        owner: John Doe
+  requestBodies:
+    bodyProducts:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: A Mongo ID.
+        title:
+          type: String
+          description: Product Name
+        price:
+          type: Number
+          description: Product price
+        status:
+          type: Boolean
+          description: Product status
+        stock:
+          type: Number
+          description: Product stock
+        category:
+          type: String
+          description: Product category
+        thumbnails:
+          type: Array
+          description: Images for the product
+        code:
+          type: Number
+          description: A unique code for the product
+        owner:
+          type: String
+          description: Product owner
+      example:
+        _id: ObjectId("647fa8c9e46dbc5a20320181")
+        title: Product Example
+        price: 99.99
+        status: Product status (true or false)
+        stock: 100
+        category: Electronics
+        thumbnails: Product Images (as Array Type)
+        code: 12345
+        owner: John Doe

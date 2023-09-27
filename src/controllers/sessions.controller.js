@@ -18,10 +18,14 @@ const login = (req, res) => {
     res.cookie("loginCookieToken", req.user, {httpOnly: true}).status(200).send({msg:"Cookie set", jwt: req.user});
 }
 
+const resetPassword = async (req, res) => {
+  res.send({status: 1, msg: 'Password successfully reseted.'});
+}
+
 const sendEmail = (req, res) => {
   try {
       const email = req.params.email;
-      const jwt = token.sign({email}, config.privateKey, { expiresIn: '1h' });
+      const token = jwt.sign({email}, config.privateKey, { expiresIn: '1h' });
       const transport = nodemailer.createTransport(mailConfig);
       transport.sendMail(
           {
@@ -29,7 +33,7 @@ const sendEmail = (req, res) => {
               to: email,
               subject: 'Test',
               html: `<h1>Reset your password</h1>
-              <p>Click <a href="http://localhost:8080/restore_password/${jwt}">here</a> to reset your password</p>`
+              <p>Click <a href="http://localhost:8080/restore_password/${token}">here</a> to reset your password</p>`
           }
       )
       res.send('Email sent!')
@@ -40,7 +44,15 @@ const sendEmail = (req, res) => {
 
 const restorePass = async (req, res) => {
   try{
-    const authHeader = req.headers.authorization;
+    const { email } = req.body
+    //const { token } = req.params;
+    const { newPassword } = req.body;
+    //const data = jwt.decode(token);
+    //console.log(data)
+    //const email = data.email
+    const user = await userService.getUserByEmail(email);
+
+    /*const authHeader = req.headers.authorization;
     if (!authHeader) return res.status(401).send({ status: "error", error: "Unauthorized" })
     const token = authHeader.split(' ')[1];
     token = req.params.token;
@@ -48,9 +60,9 @@ const restorePass = async (req, res) => {
     console.log(token)
     const { newPassword } = req.body;
     //jwt.verify(token, config.privateKey);
-    const data = jwt.decode(token);;
+    const data = jwt.decode(token);
     const email = data.email
-    const user = await userService.getUserByEmail(email);
+    const user = await userService.getUserByEmail(email);*/
     if(bcrypt.compareSync(newPassword, user.password)){
       res.status(400).send('You cannot use the same password');
       return;
@@ -109,6 +121,7 @@ const logout = (req, res) => {
 export default {
     register,
     login,
+    resetPassword,
     sendEmail,
     restorePass,
     changeUserRole,

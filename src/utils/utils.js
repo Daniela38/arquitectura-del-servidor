@@ -36,7 +36,12 @@ export const jwtVerify = (token) => {
 
 //authToken
 export const authToken = (req, res, next) => {
-    const authHeader = req.headers.authorization;
+    const token = req.params.token;
+    jwt.verify(token, config.privateKey)
+    const data = jwt.decode(token);
+    req.email = data.email
+    next();
+    /*const authHeader = req.headers.authorization;
     if (!authHeader) return res.status(401).send({ status: "error", error: "Unauthorized" })
     const token = authHeader.split(' ')[1];
     token = req.params.token;
@@ -44,7 +49,7 @@ export const authToken = (req, res, next) => {
     jwt.verify(token, config.privateKey);
     const data = jwt.decode(token);
     req.email = data.email
-    next();
+    next();*/
     /*jwt.verify(token, config.privateKey, (error, credentials) => {
         if (error) return res.status(401).send({ status: "error", error: "Unauthorized" })
         req.user = credentials.user;

@@ -63,6 +63,23 @@ const initializePassport = () => {
             })
     );
 
+    passport.use('resetPassword', new LocalStrategy({
+        usernameField: 'emai',
+        passwordField: 'newPassword',
+        passReqToCallback: true,
+    }, async (password, done) => {
+        try {
+            const user = await userModel.findOne({ email });
+            const newHashedPassword = createHash(password);
+            await userModel.updateOne({_id: user._id}, {$set: {password: newHashedPassword}});
+            return done (null, user);
+        } catch (error) {
+            errorMsg = error.message;
+            return done (errorMsg);
+        }
+    } 
+    ));
+
     passport.use('github', new GitHubStrategy({
         clientID: 'Iv1.af8e4342dc81a540', 
         clientSecret: '3ca495862b9130c1b26e72dd33d02f0808cfbf56',

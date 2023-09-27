@@ -3,6 +3,7 @@ import express from 'express';
 import configureMiddlewares from './config/middlewares.config.js';
 import configureMongo from './config/mongoDB.config.js';
 import configureHandlebars from './config/handlebars.config.js';
+import configureSwagger from './config/swagger.config.js';
 import initializePassport from './config/passport.config.js';
 import passport from 'passport';
 import path from'path';
@@ -20,6 +21,8 @@ configureMiddlewares(app);
 configureMongo();
 
 configureHandlebars(app);
+
+configureSwagger(app);
 
 initializePassport();
 app.use(passport.initialize());

@@ -13,7 +13,7 @@ router.use(cookieParser(config.privateKey));
 router.post('/register', passport.authenticate('register', { session: false}), sessionsController.register);
 router.post('/login', passport.authenticate('login', { session:false }), sessionsController.login);
 router.get('/resetpassword/:email', sessionsController.sendEmail);
-router.post('/resetpasswordvalidation/:token', sessionsController.restorePass);
+router.post('/resetpasswordvalidation/:token', sessionsController.resetPassword);
 router.post('/premium/:uid', sessionsController.changeUserRole);
 /*router.get('/resetpasswordvalidation/:token', validateResetPasswordToken, (req, res) => {
     res.redirect(`/resetpassword/${req.params.token}`);   , validateResetPasswordToken,
