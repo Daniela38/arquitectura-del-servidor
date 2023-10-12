@@ -102,6 +102,31 @@ const changeUserRole = (req, res) => {
   }
 }
 
+export const createDocuments = async (req, res) => {
+  try {
+    const { uid } = req.params;
+    const user = await UsersModel.findById(uid);
+    const documents = user.documents || [];
+
+    if (req.files && req.files.length > 0) {
+      const newDocuments = [
+        ...documents,
+        ...req.files.map((file) => ({
+          name: file.originalname,
+          reference: file.path,
+        })),
+      ];
+
+      await user.updateOne({ documents: newDocuments });
+    }
+
+    res.status(200).send("Documents created successfully");
+  } catch (error) {
+    console.error(`Interval server error ${error}`);
+    res.status(500).send(`Interval server error ${error}`);
+  }
+};
+
 const current = (req, res) => {
     res.status(200).send(req.user.user);
 }
@@ -125,6 +150,7 @@ export default {
     sendEmail,
     restorePass,
     changeUserRole,
+    createDocuments,
     current,
     github,
     githubCallback,

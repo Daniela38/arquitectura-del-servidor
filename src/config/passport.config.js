@@ -38,7 +38,8 @@ const initializePassport = () => {
                         email: email,
                         age: parseInt(age),
                         password: createHash(password),
-                        role: role
+                        role: role,
+                        last_connection: new Date()
                     };
                     user = await userModel.create(newUser);
                     return done(null, user);
