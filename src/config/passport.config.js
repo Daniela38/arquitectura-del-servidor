@@ -7,6 +7,7 @@ import { default as token } from 'jsonwebtoken';
 import { generateToken, cookieExtractor, authToken } from "../utils/utils.js";
 import GitHubStrategy from "passport-github2";
 import config from "./dotenv.config.js";
+import UserDTO from "../dto/users.dto.js";
 
 const JWTStrategy = jwt.Strategy;
 const ExtractJWT = jwt.ExtractJwt;
@@ -42,7 +43,8 @@ const initializePassport = () => {
                         last_connection: new Date()
                     };
                     user = await userModel.create(newUser);
-                    return done(null, user);
+                    const userDTO = new UserDTO(user);
+                    return done(null, userDTO);
                 } catch (error) {
                     done(null, false, { message: "error", status: 400 });
                 }
@@ -73,7 +75,8 @@ const initializePassport = () => {
             const user = await userModel.findOne({ email });
             const newHashedPassword = createHash(password);
             await userModel.updateOne({_id: user._id}, {$set: {password: newHashedPassword}});
-            return done (null, user);
+            const userDTO = new UserDTO(user);
+            return done (null, userDTO);
         } catch (error) {
             errorMsg = error.message;
             return done (errorMsg);
